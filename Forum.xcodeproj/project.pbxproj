@@ -24,6 +24,7 @@
 		2BB8C40E27DF701700AB86FE /* ForumIndexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8C40A27DF701700AB86FE /* ForumIndexView.swift */; };
 		2BB8C41127DF706D00AB86FE /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8C40F27DF706D00AB86FE /* BoardView.swift */; };
 		2BB8C41227DF706D00AB86FE /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8C41027DF706D00AB86FE /* BoardViewModel.swift */; };
+		2BD6ADC227DFA3770065432E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2BD6ADC127DFA3770065432E /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		2BB8C40A27DF701700AB86FE /* ForumIndexView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForumIndexView.swift; sourceTree = "<group>"; };
 		2BB8C40F27DF706D00AB86FE /* BoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		2BB8C41027DF706D00AB86FE /* BoardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
+		2BD6ADC127DFA3770065432E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				0126BE5927D38C1F00D34588 /* Forum */,
+				2BD6ADC127DFA3770065432E /* .gitignore */,
 				0126BE5827D38C1F00D34588 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0126BE6227D38C2100D34588 /* Preview Assets.xcassets in Resources */,
+				2BD6ADC227DFA3770065432E /* .gitignore in Resources */,
 				0126BE5F27D38C2100D34588 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
