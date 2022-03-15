@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Account: Identifiable {
+struct Account: Identifiable, Decodable {
     let id: String
     let username: String
     var roles: [String]
-    var nickName: String
+    var nickname: String
 }

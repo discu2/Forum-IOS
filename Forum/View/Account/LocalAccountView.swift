@@ -11,11 +11,14 @@ struct LocalAccountView: View {
     @StateObject private var viewModel = LocalAccountViewModel()
     
     var body: some View {
-        if viewModel.refreshToken == "" {
-            LoginView().environmentObject(viewModel)
-        } else {
-            Text(viewModel.refreshToken)
-        }
+        
+        NavigationView {
+            if viewModel.refreshToken == "" {
+                LoginView()
+            } else {
+                ProfileView()
+            }
+        }.environmentObject(viewModel)
         
     }
 }
@@ -42,7 +45,7 @@ struct LoginView: View {
                 .padding(.bottom, 20)
             
             Button(action: {
-                viewModel.login(username: username, password: password)
+                login()
                 
             }) {
                 Text("Login")
@@ -54,10 +57,51 @@ struct LoginView: View {
         }
         .padding(38)
     }
+    
+    func login() {
+        DispatchQueue.main.async {
+            viewModel.login(username: username, password: password)
+        }
+    }
+}
+
+struct ProfileView: View {
+    @EnvironmentObject var viewModel: LocalAccountViewModel
+    
+    var body: some View {
+        VStack {
+            //            Image("x")
+            //                .resizable()
+            //                .frame(width: 120, height: 120)
+            //                .clipShape(Circle())
+            
+            Text(viewModel.account != nil ? viewModel.account!.nickname : "some text")
+                .font(.title)
+                .bold()
+            
+            Button(action: { viewModel.logout() }) {
+                Text("Logout")
+                    .padding(10)
+                    .background(.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(7)
+            }
+        }
+        .onAppear( perform: {
+            if viewModel.account == nil {
+                viewModel.fetchAccountData(accountId: viewModel.accountId)
+            }
+            
+            
+        })
+        .redacted(reason: viewModel.account == nil ? .placeholder : [])
+        
+    }
 }
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
         LocalAccountView()
+        //ProfileView()
     }
 }
