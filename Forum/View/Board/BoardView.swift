@@ -23,7 +23,7 @@ struct BoardView: View {
         }
         
         .navigationViewStyle(.stack)
-        .onAppear(perform: { viewModel.updateBoards() })
+        .onAppear(perform: { viewModel.fetchBoards() })
         
     }
 }

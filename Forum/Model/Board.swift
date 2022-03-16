@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Board: Identifiable {
+struct Board: Identifiable, Decodable {
     static let PERMISSION_ACCESS = "access"
     static let PERMISSION_POST = "post"
     static let PERMISSION_REPLY = "reply"
