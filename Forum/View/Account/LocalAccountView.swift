@@ -26,7 +26,7 @@ struct LocalAccountView: View {
 struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
-    @State private var errorMsg = ""
+    @State private var pressed = false
     @EnvironmentObject var viewModel: LocalAccountViewModel
     
     var body: some View {
@@ -38,15 +38,17 @@ struct LoginView: View {
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
                 .keyboardType(.namePhonePad)
+            
             SecureField("password", text: $password)
                 .padding()
                 .background(.regularMaterial)
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
+                .keyboardType(.namePhonePad)
             
             Button(action: {
                 login()
-                
+                pressed = true
             }) {
                 Text("Login")
                     .padding(10)
@@ -54,14 +56,14 @@ struct LoginView: View {
                     .foregroundColor(.white)
                     .cornerRadius(7)
             }
+            .opacity(viewModel.logining ? 0.5 : 1.0)
+            .disabled(viewModel.logining)
         }
         .padding(38)
     }
     
     func login() {
-        DispatchQueue.main.async {
-            viewModel.login(username: username, password: password)
-        }
+        viewModel.login(username: username, password: password)
     }
 }
 
@@ -88,11 +90,11 @@ struct ProfileView: View {
             }
         }
         .onAppear( perform: {
-            if viewModel.account == nil {
-                viewModel.fetchAccountData(accountId: viewModel.accountId)
+            
+            if viewModel.account == nil && viewModel.accountId != "" {
+                viewModel.fetchAccountData(username: viewModel.accountId)
             }
-            
-            
+
         })
         .redacted(reason: viewModel.account == nil ? .placeholder : [])
         

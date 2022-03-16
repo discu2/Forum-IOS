@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account?
@@ -13,10 +14,14 @@ class LocalAccountViewModel: ObservableObject {
     @Published var refreshToken = ""
     @Published var accessToken = ""
     
+    @Published var logining = false
+    
     private let userDefault = UserDefaults.standard
     
     private let LOCAL_ACCOUNT_ID = "localAccountId"
     private let REFRESH_TOKEN = "refreshToken"
+    
+    var cancellables = Set<AnyCancellable>()
     
     init() {
         
@@ -27,7 +32,7 @@ class LocalAccountViewModel: ObservableObject {
         if let refreshToken = userDefault.string(forKey: REFRESH_TOKEN) {
             self.refreshToken = refreshToken
         }
-        
+              
     }
     
 //    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
@@ -36,52 +41,67 @@ class LocalAccountViewModel: ObservableObject {
     
     func login(username: String, password: String) {
         
-        let group = DispatchGroup()
+        logining = true
         
-        var tokens: TokenResponse?
-        var account: Account?
-        
-        group.enter()
-        fetchApi(urlString: "http://localhost:8080/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self) { data in
-            
-            tokens = data
-            group.leave()
-        }
-        
-        group.enter()
-        fetchApi(urlString: "http://localhost:8080/account/" + username, responsePackageType: Account.self) { data in
-            
-            account = data
-            group.leave()
-        }
-        
-        group.notify(queue: .main) {
-            if let tokens = tokens, let account = account {
-                self.accessToken = tokens.accessToken
-                self.refreshToken = tokens.refreshToken
-                self.account = account
+        ApiService.fetchApi(urlString: "http://localhost:8080/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (completion) in
+                switch completion {
+                    
+                case .finished:
+                    self?.fetchAccountData(username: username)
+
+                case .failure(let error):
+                    print(error)
+                
+                }
+                
+                self?.logining = false
+                
+            } receiveValue: { [weak self] (data) in
+                
+                guard let self = self else { return }
+                self.refreshToken = data!.refreshToken
+                self.accessToken = data!.accessToken
                 
                 self.saveLocalAccount()
             }
-        }
+            .store(in: &cancellables)
+        
     }
     
-    func fetchAccountData(accountId: String) {
+    func fetchAccountData(accountId: String? = nil, username: String? = nil) {
         
-        let group = DispatchGroup()
-        var account: Account?
+        var urlString = "http://localhost:8080/account/"
         
-        group.enter()
-        fetchApi(urlString: "http://localhost:8080/account/" + accountId + "?type=id", responsePackageType: Account.self) { data in
-            account = data
-            group.leave()
-        }
+        if accountId != nil {
+            urlString = urlString + accountId! + "?type=id"
+        } else if username != nil {
+            urlString = urlString + username!
+        } else { return }
+
         
-        group.notify(queue: .main) {
-            if let account = account {
-                self.account = account
+        ApiService.fetchApi(urlString: urlString, responsePackageType: Account.self)
+            .receive(on: DispatchQueue.main)
+            .sink { (completion) in
+                switch completion {
+                    
+                case .finished:
+                    break
+                    
+                case .failure(let error):
+                    print(error)
+                    
+                }
+                
+            } receiveValue: { [weak self] (data) in
+                guard let self = self else { return }
+                
+                self.account = data
+                self.saveLocalAccount()
             }
-        }
+            .store(in: &cancellables)
+
     }
     
     func logout() {
