@@ -32,12 +32,10 @@ struct TopicListView: View {
     }
 }
 
-
-
 struct TopicView: View {
-    @State var title: String
-    @State var lastPostTime: Date
-    @State var formatter: DateFormatter
+    var title: String
+    var lastPostTime: Date
+    var formatter: DateFormatter
     
     var body: some View {
         
