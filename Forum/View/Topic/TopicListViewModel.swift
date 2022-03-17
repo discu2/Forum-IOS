@@ -6,46 +6,78 @@
 //
 
 import SwiftUI
+import Combine
 
 class TopicListViewModel: ObservableObject {
+    //@Published var boardId: String
     @Published var topics: [Topic] = []
-    @Published var dateFormatter = DateFormatter()
     
-    init() {
-
+    var cancellable = Set<AnyCancellable>()
+    
+    private let dataFetchable: DataFetchable
+    
+    var dateFormatter = DateFormatter()
+    
+    init(dataFetchable: DataFetchable) {
+        
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .short
         dateFormatter.locale = Locale.current
         dateFormatter.doesRelativeDateFormatting = true
-        
-        
-
-        // modifying locale
-
         dateFormatter.locale = Locale(identifier: "zh_TW")
-        //updateTopics("oajsd")
         
+        self.dataFetchable = dataFetchable
        
     }
     
-    func updateTopics(_ boardId: String) {
+    func refresh(_ boardId: String) {
+        topics = []
+        fetchTopics(boardId)
+    }
+    
+    func fetchTopics(_ boardId: String, page: Int=1) {
         
-        let timeNow = Date.now
-        
-        topics = [
-            Topic(id: "1h84921fho24f", owner: "aa", title: "test1", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test2", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test3", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test4", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test5", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test6", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test7", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test8", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test9", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test10", postTime: timeNow, lastPostTime: timeNow),
-            Topic(id: UUID().uuidString, owner: "aa", title: "test11", postTime: timeNow, lastPostTime: timeNow)
-        ]
+        dataFetchable.fetchApi(urlString: "http://localhost:8080/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
+            .receive(on: DispatchQueue.main)
+            .sink { (completion) in
+                
+                switch completion{
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+                
+            } receiveValue: { [weak self] (data) in
+                
+                guard let self = self, let data = data else {
+                    return
+                }
+                
+                var topics: [Topic] = []
+                
+                for r in data {
+                    topics.append(Topic(id: r.id, ownerId: r.ownerId, username: r.username, title: r.title, lastPosterId: r.lastPosterId, lastPostUsername: r.lastPosterUsername, postTime: Date(timeIntervalSince1970: r.lastPostTime/1000), lastPostTime: Date(timeIntervalSince1970: r.lastPostTime/1000), pinned: r.pinnedOrder > 0))
+                }
+                
+                self.topics += topics
+            }
+            .store(in: &cancellable)
         
     }
     
+    struct TopicResponse: Decodable {
+        let id: String
+        let boardId: String
+        let ownerId: String
+        let username: String
+        let title: String
+        let lastPosterId: String
+        let lastPosterUsername: String
+
+        let createTime: Double
+        let lastPostTime: Double
+
+        let pinnedOrder: Int;
+    }
 }

@@ -8,34 +8,46 @@
 import SwiftUI
 
 struct TopicListView: View {
-    //@State var show = false
     @State var boardId: String
     @State var boardName: String
-    @StateObject private var viewModel = TopicListViewModel()
+    @State var page = 1
+    @StateObject private var viewModel = TopicListViewModel(dataFetchable: ApiService.apiService)
     
     
     var body: some View {
-        List(viewModel.topics, id: \.id) { item in
+        List(viewModel.topics.indices, id: \.self) { index in
             HStack {
-                TopicView(title: item.title, lastPostTime: item.lastPostTime, formatter: viewModel.dateFormatter)
-                NavigationLink(destination: PostView(title: item.title, topicId: item.id)) {
+                TopicView(title: viewModel.topics[index].title, lastPostTime: viewModel.topics[index].lastPostTime, formatter: $viewModel.dateFormatter)
+                NavigationLink(destination: PostView(title: viewModel.topics[index].title, topicId: viewModel.topics[index].id)) {
                     
                     EmptyView()
                 }
                 .frame(width: 0)
                 .opacity(0)
             }
+            .onAppear {
+                if index == viewModel.topics.count-1 {
+                    page+=1
+                    viewModel.fetchTopics(boardId, page: page)
+                }
+            }
         }
         .listStyle(.plain)
         .navigationBarTitle(boardName)
-        .onAppear(perform: {viewModel.updateTopics(boardId)})
+        .refreshable {
+            page = 1
+            viewModel.refresh(boardId)
+        }
+        .onAppear{
+            viewModel.fetchTopics(boardId)
+        }
     }
 }
 
 struct TopicView: View {
     var title: String
     var lastPostTime: Date
-    var formatter: DateFormatter
+    @Binding var formatter: DateFormatter
     
     var body: some View {
         
