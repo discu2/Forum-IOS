@@ -14,7 +14,11 @@ class BoardViewModel: ObservableObject {
     
     var cancellable = Set<AnyCancellable>()
     
-    init(){}
+    private let dataFetchable: DataFetchable
+    
+    init(dataFetchable: DataFetchable){
+        self.dataFetchable = dataFetchable
+    }
     
     func fetchBoards() {
         
@@ -24,7 +28,7 @@ class BoardViewModel: ObservableObject {
         var boards: [String: [Board]] = [:]
         var groups: [String] = []
         
-        ApiService.fetchApi(urlString: "http://localhost:8080/board", responsePackageType: [Board].self)
+        dataFetchable.fetchApi(urlString: "http://localhost:8080/board", responsePackageType: [Board].self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 
@@ -66,10 +70,4 @@ class BoardViewModel: ObservableObject {
             .store(in: &cancellable)
     }
     
-    let testBoard = [
-        Board(id: "ad390jfijocs", name: "Test Board", groupName: "Test group"),
-        Board(id: "ad390jfid8jo", name: "Test Board2", groupName: "Test group"),
-        Board(id: "adrw934jfijo", name: "Test Board3", groupName: "Test group1"),
-        Board(id: "ad0jregerifjo", name: "Test Board4", groupName: "Test group3")
-    ]
 }

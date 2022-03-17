@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LocalAccountView: View {
-    @StateObject private var viewModel = LocalAccountViewModel()
+    @StateObject private var viewModel = LocalAccountViewModel(dataFetchable: ApiService.apiService)
     
     var body: some View {
         

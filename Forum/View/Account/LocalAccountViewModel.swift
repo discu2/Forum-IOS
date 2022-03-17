@@ -8,6 +8,8 @@
 import SwiftUI
 import Combine
 
+extension ApiService: DataFetchable {}
+
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account?
     @Published var accountId = ""
@@ -18,12 +20,16 @@ class LocalAccountViewModel: ObservableObject {
     
     private let userDefault = UserDefaults.standard
     
+    private let dataFetchable: DataFetchable
+    
     private let LOCAL_ACCOUNT_ID = "localAccountId"
     private let REFRESH_TOKEN = "refreshToken"
     
     var cancellables = Set<AnyCancellable>()
     
-    init() {
+    init(dataFetchable: DataFetchable) {
+        
+        self.dataFetchable = dataFetchable
         
         if let accountId = userDefault.string(forKey: LOCAL_ACCOUNT_ID) {
             self.accountId = accountId
@@ -43,7 +49,7 @@ class LocalAccountViewModel: ObservableObject {
         
         logining = true
         
-        ApiService.fetchApi(urlString: "http://localhost:8080/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
+        dataFetchable.fetchApi(urlString: "http://localhost:8080/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
                 switch completion {
@@ -81,7 +87,7 @@ class LocalAccountViewModel: ObservableObject {
         } else { return }
 
         
-        ApiService.fetchApi(urlString: urlString, responsePackageType: Account.self)
+        dataFetchable.fetchApi(urlString: urlString, responsePackageType: Account.self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 switch completion {

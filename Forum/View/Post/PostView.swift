@@ -26,6 +26,11 @@ struct PostView: View {
         .listStyle(.plain)
         .navigationBarTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            /*
+             * WIP
+             */
+        }
         .onAppear(perform: {viewModel.updatePosts(topicId)})
         
     }

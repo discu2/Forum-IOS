@@ -8,9 +8,11 @@
 import Foundation
 import Combine
 
-enum ApiService{
+class ApiService {
     
-    static func fetchApi<T: Encodable, C: Decodable>(urlString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
+    public static let apiService = ApiService()
+    
+    func fetchApi<T: Encodable, C: Decodable>(urlString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
         
         let url = URL(string: urlString)!
         var request = URLRequest(url: url)
@@ -46,7 +48,7 @@ enum ApiService{
         }
     }
     
-    static func fetchApi<C: Decodable>(urlString: String, responsePackageType: C.Type) -> Future<C?, Error> {
+    func fetchApi<C: Decodable>(urlString: String, responsePackageType: C.Type) -> Future<C?, Error> {
         
         let url = URL(string: urlString)!
         

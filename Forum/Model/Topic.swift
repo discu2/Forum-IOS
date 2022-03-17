@@ -9,9 +9,13 @@ import Foundation
 
 struct Topic: Identifiable {
     let id: String
-    let owner: String
+    let ownerId: String
+    let username: String
     var title: String
+    var lastPosterId: String
+    var lastPostUsername: String
     let postTime: Date
     let lastPostTime: Date
+    let pinned: Bool
     //var shortContent: String
 }

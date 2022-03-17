@@ -6,3 +6,10 @@
 //
 
 import Foundation
+import Combine
+
+protocol DataFetchable {
+    func fetchApi<T: Encodable, C: Decodable>(urlString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error>
+    
+    func fetchApi<C: Decodable>(urlString: String, responsePackageType: C.Type) -> Future<C?, Error>
+}

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BoardView: View {
-    @StateObject private var viewModel = BoardViewModel()
+    @StateObject private var viewModel = BoardViewModel(dataFetchable: ApiService.apiService)
     
     var body: some View {
         NavigationView {
@@ -23,14 +23,21 @@ struct BoardView: View {
         }
         
         .navigationViewStyle(.stack)
-        .onAppear(perform: { viewModel.fetchBoards() })
+        .refreshable {
+            viewModel.fetchBoards()
+        }
+        .onAppear(perform: {
+            if viewModel.boards.isEmpty{
+                viewModel.fetchBoards()
+            }
+        })
         
     }
 }
 
 struct GroupView: View {
-    @State var group: String
-    @State var boards: [Board] = []
+    var group: String
+    var boards: [Board] = []
     @State var expanded = false
     
     var body: some View {
