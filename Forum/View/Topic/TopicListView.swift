@@ -1,6 +1,6 @@
 //
-//  MainView.swift
-//  Todoer
+//  TopicListView.swift
+//  Forum
 //
 //  Created by Frank V on 2022/3/5.
 //
@@ -11,7 +11,6 @@ struct TopicListView: View {
     @StateObject var viewModel: TopicListViewModel
     @State var boardId: String
     @State var boardName: String
-    @State var page = 1
     
     init(dataFetchable: DataFetchable, boardId: String, boardName: String) {
         self._viewModel = StateObject(wrappedValue: TopicListViewModel(dataFetchable: dataFetchable))
@@ -33,16 +32,15 @@ struct TopicListView: View {
             }
             .onAppear {
                 if index == viewModel.topics.count-1 {
-                    page+=1
-                    viewModel.fetchTopics(boardId, page: page)
+                    viewModel.page+=1
+                    viewModel.fetchTopics(boardId)
                 }
             }
         }
         .listStyle(.plain)
         .navigationBarTitle(boardName)
         .refreshable {
-            page = 1
-            viewModel.refresh(boardId)
+            await viewModel.refresh()
         }
         .onAppear{
             viewModel.boardId = boardId

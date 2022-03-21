@@ -28,7 +28,7 @@ struct BoardView: View {
         }
         .navigationViewStyle(.stack)
         .refreshable {
-            viewModel.fetchBoards()
+            await viewModel.refresh()
         }
         .onAppear(perform: {
             if viewModel.boards.isEmpty {

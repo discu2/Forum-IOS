@@ -11,6 +11,8 @@ import Combine
 class TopicListViewModel: ObservableObject {
     @Published var boardId: String? = nil
     @Published var topics: [Topic] = []
+    var refreshing = false
+    var page: Int = 1
     
     let dataFetchable: DataFetchable
     var dateFormatter = DateFormatter()
@@ -30,9 +32,24 @@ class TopicListViewModel: ObservableObject {
        
     }
     
-    func refresh(_ boardId: String) {
+    deinit {
+        cancellable.forEach { c in
+            c.cancel()
+        }
+    }
+    
+    func refresh() async {
+        guard let boardId = boardId else { return }
+        
+        refreshing = true
         topics.removeAll()
+        page = 1
         fetchTopics(boardId)
+        
+        while(refreshing) {
+            try? await Task.sleep(nanoseconds: 100000000)
+        }
+        
     }
     
     func boardIdListener() {
@@ -48,15 +65,15 @@ class TopicListViewModel: ObservableObject {
         .store(in: &cancellable)
     }
     
-    func fetchTopics(_ boardId: String, page: Int=1) {
+    func fetchTopics(_ boardId: String) {
         
         dataFetchable.fetchApi(uriString: "/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
             .receive(on: DispatchQueue.main)
-            .sink { (completion) in
+            .sink { [weak self] (completion) in
                 
                 switch completion{
                 case .finished:
-                    break
+                    self?.refreshing = false
                 case .failure(let error):
                     print(error)
                 }

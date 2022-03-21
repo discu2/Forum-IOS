@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct ForumIndexView: View {
-    private let dataFetchable: DataFetchable
-    
-    init(dataFetchable: DataFetchable) {
-        self.dataFetchable = dataFetchable
-    }
+    @State var dataFetchable: DataFetchable
     
     var body: some View {
         TabView {

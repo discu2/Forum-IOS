@@ -11,6 +11,7 @@ import Combine
 class BoardViewModel: ObservableObject {
     @Published var groups: [String] = []
     @Published var boards: [String: [Board]] = [:]
+    var refreshing = false
     
     var cancellable = Set<AnyCancellable>()
     
@@ -18,6 +19,15 @@ class BoardViewModel: ObservableObject {
     
     init(dataFetchable: DataFetchable){
         self.dataFetchable = dataFetchable
+    }
+    
+    func refresh() async {
+        refreshing = true
+        fetchBoards()
+        
+        while(refreshing) {
+            try? await Task.sleep(nanoseconds: 100000000)
+        }
     }
     
     func fetchBoards() {
@@ -30,12 +40,12 @@ class BoardViewModel: ObservableObject {
         
         dataFetchable.fetchApi(uriString: "/board", responsePackageType: [Board].self)
             .receive(on: DispatchQueue.main)
-            .sink { (completion) in
+            .sink { [weak self] (completion) in
                 
                 switch completion {
                     
                 case .finished:
-                    break
+                    self?.refreshing = false
                     
                 case .failure(let error):
                     print(error)

@@ -22,6 +22,12 @@ class PostViewModel: ObservableObject {
         topicIdListener()
     }
     
+    deinit {
+        cancellable.forEach { c in
+            c.cancel()
+        }
+    }
+    
     func topicIdListener() {
         
         $topicId
