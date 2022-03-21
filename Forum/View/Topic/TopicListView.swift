@@ -8,17 +8,23 @@
 import SwiftUI
 
 struct TopicListView: View {
+    @StateObject var viewModel: TopicListViewModel
     @State var boardId: String
     @State var boardName: String
     @State var page = 1
-    @StateObject private var viewModel = TopicListViewModel(dataFetchable: ApiService.apiService)
     
+    init(dataFetchable: DataFetchable, boardId: String, boardName: String) {
+        self._viewModel = StateObject(wrappedValue: TopicListViewModel(dataFetchable: dataFetchable))
+        self.boardId = boardId
+        self.boardName = boardName
+    }
     
     var body: some View {
         List(viewModel.topics.indices, id: \.self) { index in
             HStack {
-                TopicView(title: viewModel.topics[index].title, lastPostTime: viewModel.topics[index].lastPostTime, formatter: $viewModel.dateFormatter)
-                NavigationLink(destination: PostView(title: viewModel.topics[index].title, topicId: viewModel.topics[index].id)) {
+                TopicView(title: viewModel.topics[index].title, lastPostTime: viewModel.topics[index].lastPostTime, formatter: viewModel.dateFormatter)
+                
+                NavigationLink(destination: PostView(dataFetchable: viewModel.dataFetchable, title: viewModel.topics[index].title, topicId: viewModel.topics[index].id)) {
                     
                     EmptyView()
                 }
@@ -39,7 +45,7 @@ struct TopicListView: View {
             viewModel.refresh(boardId)
         }
         .onAppear{
-            viewModel.fetchTopics(boardId)
+            viewModel.boardId = boardId
         }
     }
 }
@@ -47,7 +53,7 @@ struct TopicListView: View {
 struct TopicView: View {
     var title: String
     var lastPostTime: Date
-    @Binding var formatter: DateFormatter
+    var formatter: DateFormatter
     
     var body: some View {
         
@@ -67,7 +73,7 @@ struct TopicView: View {
 struct TopicListView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            TopicListView(boardId: "aasojd", boardName: "Preview Name")
+            TopicListView(dataFetchable: ApiService(urlString: ""), boardId: "aasojd", boardName: "Preview Name")
         }
     }
 }

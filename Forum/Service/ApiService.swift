@@ -8,13 +8,17 @@
 import Foundation
 import Combine
 
-class ApiService {
+class ApiService: DataFetchable {
     
-    public static let apiService = ApiService()
+    let urlString: String
     
-    func fetchApi<T: Encodable, C: Decodable>(urlString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
+    init(urlString: String) {
+        self.urlString = urlString
+    }
+    
+    func fetchApi<T: Encodable, C: Decodable>(uriString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
         
-        let url = URL(string: urlString)!
+        let url = URL(string: urlString + uriString)!
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -40,7 +44,7 @@ class ApiService {
                         }
                     }
                 } else {
-                    promise(.failure(NSError(domain: urlString, code: code)))
+                    promise(.failure(NSError(domain: uriString, code: code)))
                 }
                 
             }.resume()
@@ -48,9 +52,10 @@ class ApiService {
         }
     }
     
-    func fetchApi<C: Decodable>(urlString: String, responsePackageType: C.Type) -> Future<C?, Error> {
+    
+    func fetchApi<C: Decodable>(uriString: String, responsePackageType: C.Type) -> Future<C?, Error> {
         
-        let url = URL(string: urlString)!
+        let url = URL(string: urlString + uriString)!
         
         return Future { promise in
             
@@ -70,7 +75,7 @@ class ApiService {
                     }
                     
                 } else {
-                    promise(.failure(NSError(domain: urlString, code: code)))
+                    promise(.failure(NSError(domain: uriString, code: code)))
                 }
             }.resume()
             

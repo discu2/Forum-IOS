@@ -10,18 +10,17 @@ import SwiftUI
 struct PostView: View {
     @State private var title: String
     @State private var topicId: String
-    @StateObject private var viewModel = PostViewModel()
+    @StateObject private var viewModel: PostViewModel
     
-    init(title: String, topicId: String) {
+    init(dataFetchable: DataFetchable, title: String, topicId: String) {
+        self._viewModel = StateObject(wrappedValue: PostViewModel(dataFetchable: dataFetchable))
         self.topicId = topicId
         self.title = title
     }
     
     var body: some View {
         List(viewModel.posts, id: \.id) { item in
-            if (item.topicId == topicId) {
-                TextblockView(textBlock: item.textBlock)
-            }
+            TextblockView(textBlock: item.textBlock)
         }
         .listStyle(.plain)
         .navigationBarTitle(title)
@@ -31,7 +30,9 @@ struct PostView: View {
              * WIP
              */
         }
-        .onAppear(perform: {viewModel.updatePosts(topicId)})
+        .onAppear(perform: {
+            viewModel.topicId = topicId
+        })
         
     }
 }

@@ -8,8 +8,6 @@
 import SwiftUI
 import Combine
 
-extension ApiService: DataFetchable {}
-
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account?
     @Published var accountId = ""
@@ -20,10 +18,10 @@ class LocalAccountViewModel: ObservableObject {
     
     private let userDefault = UserDefaults.standard
     
-    private let dataFetchable: DataFetchable
-    
     private let LOCAL_ACCOUNT_ID = "localAccountId"
     private let REFRESH_TOKEN = "refreshToken"
+    
+    let dataFetchable: DataFetchable
     
     var cancellables = Set<AnyCancellable>()
     
@@ -49,7 +47,7 @@ class LocalAccountViewModel: ObservableObject {
         
         logining = true
         
-        dataFetchable.fetchApi(urlString: "http://localhost:8080/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
+        dataFetchable.fetchApi(uriString: "/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
                 switch completion {
@@ -78,16 +76,16 @@ class LocalAccountViewModel: ObservableObject {
     
     func fetchAccountData(accountId: String? = nil, username: String? = nil) {
         
-        var urlString = "http://localhost:8080/account/"
+        var uriString = "/account/"
         
         if accountId != nil {
-            urlString = urlString + accountId! + "?type=id"
+            uriString = uriString + accountId! + "?type=id"
         } else if username != nil {
-            urlString = urlString + username!
+            uriString = uriString + username!
         } else { return }
 
         
-        dataFetchable.fetchApi(urlString: urlString, responsePackageType: Account.self)
+        dataFetchable.fetchApi(uriString: uriString, responsePackageType: Account.self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 switch completion {

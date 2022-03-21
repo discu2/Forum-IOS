@@ -9,14 +9,12 @@ import SwiftUI
 import Combine
 
 class TopicListViewModel: ObservableObject {
-    //@Published var boardId: String
+    @Published var boardId: String? = nil
     @Published var topics: [Topic] = []
     
-    var cancellable = Set<AnyCancellable>()
-    
-    private let dataFetchable: DataFetchable
-    
+    let dataFetchable: DataFetchable
     var dateFormatter = DateFormatter()
+    var cancellable = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         
@@ -27,17 +25,32 @@ class TopicListViewModel: ObservableObject {
         dateFormatter.locale = Locale(identifier: "zh_TW")
         
         self.dataFetchable = dataFetchable
+        
+        boardIdListener()
        
     }
     
     func refresh(_ boardId: String) {
-        topics = []
+        topics.removeAll()
         fetchTopics(boardId)
+    }
+    
+    func boardIdListener() {
+        
+        $boardId.sink { [weak self] (data) in
+            guard let self = self, let data = data, self.boardId != data else {
+                return
+            }
+            
+            self.topics.removeAll()
+            self.fetchTopics(data)
+        }
+        .store(in: &cancellable)
     }
     
     func fetchTopics(_ boardId: String, page: Int=1) {
         
-        dataFetchable.fetchApi(urlString: "http://localhost:8080/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
+        dataFetchable.fetchApi(uriString: "/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 

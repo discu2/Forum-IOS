@@ -6,22 +6,79 @@
 //
 
 import SwiftUI
+import Combine
 
 class PostViewModel: ObservableObject {
-    var topicId: String?
+    @Published var topicId: String? = nil
     @Published var posts: [Post] = []
     
-    init() {}
+    let dataFetchable: DataFetchable
     
-    func updatePosts(_ topic: String) {
-        posts = testPosts
+    var cancellable = Set<AnyCancellable>()
+    
+    init(dataFetchable: DataFetchable) {
+        self.dataFetchable = dataFetchable
+        
+        topicIdListener()
     }
     
-    var testPosts: [Post] = [
-        Post(id: "1h84921fhfdfeo24f", textBlock: TextBlock(ownerId: "aef", username: "testname", postTime: Date.now, lastEditTime: Date.now, content: "this is my text post", likeUserIds: [], dislikeUserIds: [])
-             , topicId: "1h84921fho24f", originPost: true),
+    func topicIdListener() {
         
-        Post(id: "1h84921fhfdfeo24fg", textBlock: TextBlock(ownerId: "aef", username: "testname", postTime: Date.now, lastEditTime: Date.now, content: "this is my text reply", likeUserIds: [], dislikeUserIds: [])
-             , topicId: "1h84921fho24f", originPost: false)
-    ]
+        $topicId
+            .sink { [weak self] (data) in
+                guard let self = self, let data = data, self.topicId != data else {
+                    return
+                }
+                
+                self.posts = []
+                self.fetchPosts(data, page: 1)
+            }
+            .store(in: &cancellable)
+    }
+    
+    func fetchPosts(_ topicId: String, page: Int) {
+        
+        let uriString = "/post/" + topicId + "?page=" + page.description
+        
+        dataFetchable.fetchApi(uriString: uriString, responsePackageType: [TopicResponse].self)
+            .receive(on: DispatchQueue.main)
+            .sink { (completion) in
+                switch completion{
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+                
+            } receiveValue: { [weak self] (data) in
+                guard let self = self, let data = data else {
+                    return
+                }
+                
+                var posts: [Post] = []
+                
+                for p in data {
+                    let textblock = TextBlock(ownerId: p.ownerId, username: p.username, postTime: Date(timeIntervalSince1970: p.postTime/1000), lastEditTime: Date(timeIntervalSince1970: p.lastEditTime/1000), content: p.content, likeUserIds: p.likeUserIds, dislikeUserIds: p.dislikeUserIds)
+                    posts.append(Post(id: p.id, textBlock: textblock, topicId: p.topicId, originPost: p.originPost))
+                }
+                
+                self.posts += posts
+                
+            }
+            .store(in: &cancellable)
+        
+    }
+    
+    struct TopicResponse: Decodable {
+        let id: String
+        let ownerId: String
+        let username: String
+        let postTime: Double
+        let lastEditTime: Double
+        let content: String
+        let likeUserIds: [String]
+        let dislikeUserIds: [String]
+        let topicId: String
+        let originPost: Bool
+    }
 }

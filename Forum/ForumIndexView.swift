@@ -8,15 +8,21 @@
 import SwiftUI
 
 struct ForumIndexView: View {
+    private let dataFetchable: DataFetchable
+    
+    init(dataFetchable: DataFetchable) {
+        self.dataFetchable = dataFetchable
+    }
+    
     var body: some View {
         TabView {
-            BoardView()
+            BoardView(dataFetchable: dataFetchable)
                 .tabItem() {
                     Image(systemName: "list.dash")
                 }
                 .tag("board")
             
-            LocalAccountView()
+            LocalAccountView(dataFetchable: dataFetchable)
                 .tabItem {
                     Image(systemName: "person.fill")
                 }
@@ -27,6 +33,6 @@ struct ForumIndexView: View {
 
 struct ForumIndexView_Previews: PreviewProvider {
     static var previews: some View {
-        ForumIndexView()
+        ForumIndexView(dataFetchable: ApiService(urlString: ""))
     }
 }

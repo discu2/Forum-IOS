@@ -14,7 +14,7 @@ class BoardViewModel: ObservableObject {
     
     var cancellable = Set<AnyCancellable>()
     
-    private let dataFetchable: DataFetchable
+    let dataFetchable: DataFetchable
     
     init(dataFetchable: DataFetchable){
         self.dataFetchable = dataFetchable
@@ -28,7 +28,7 @@ class BoardViewModel: ObservableObject {
         var boards: [String: [Board]] = [:]
         var groups: [String] = []
         
-        dataFetchable.fetchApi(urlString: "http://localhost:8080/board", responsePackageType: [Board].self)
+        dataFetchable.fetchApi(uriString: "/board", responsePackageType: [Board].self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 
@@ -43,20 +43,16 @@ class BoardViewModel: ObservableObject {
                 }
                 
             } receiveValue: { [weak self] (data) in
-                guard let self = self else {
+                guard let self = self, let data = data else {
                     return
                 }
                 
-                if let data = data {
-                    for item in data {
-                        if var c = boards[item.groupName] {
-                            
-                            c.append(item)
-                            boards.updateValue(c, forKey: item.groupName)
-                            
-                        } else {
-                            boards.updateValue([item], forKey: item.groupName)
-                        }
+                for item in data {
+                    if var c = boards[item.groupName] {
+                        c.append(item)
+                        boards.updateValue(c, forKey: item.groupName)
+                    } else {
+                        boards.updateValue([item], forKey: item.groupName)
                     }
                 }
                 

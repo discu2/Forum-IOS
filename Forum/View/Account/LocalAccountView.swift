@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct LocalAccountView: View {
-    @StateObject private var viewModel = LocalAccountViewModel(dataFetchable: ApiService.apiService)
+    @StateObject private var viewModel: LocalAccountViewModel
+    
+    init(dataFetchable: DataFetchable) {
+        self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable))
+    }
     
     var body: some View {
         
@@ -18,7 +22,8 @@ struct LocalAccountView: View {
             } else {
                 ProfileView()
             }
-        }.environmentObject(viewModel)
+        }
+        .environmentObject(viewModel)
         
     }
 }
@@ -26,7 +31,6 @@ struct LocalAccountView: View {
 struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
-    @State private var pressed = false
     @EnvironmentObject var viewModel: LocalAccountViewModel
     
     var body: some View {
@@ -48,7 +52,6 @@ struct LoginView: View {
             
             Button(action: {
                 login()
-                pressed = true
             }) {
                 Text("Login")
                     .padding(10)
@@ -103,7 +106,7 @@ struct ProfileView: View {
 
 struct AccountView_Previews: PreviewProvider {
     static var previews: some View {
-        LocalAccountView()
-        //ProfileView()
+        LocalAccountView(dataFetchable: ApiService(urlString: ""))
+        ProfileView()
     }
 }
