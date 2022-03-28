@@ -25,17 +25,16 @@ struct BoardView: View {
             }
             .navigationBarTitle("Boards")
             .navigationViewStyle(.stack)
+            .refreshable {
+                await viewModel.refresh()
+            }
+            .onAppear(perform: {
+                if viewModel.boards.isEmpty {
+                    viewModel.fetchBoards()
+                }
+            })
         }
         .navigationViewStyle(.stack)
-        .refreshable {
-            await viewModel.refresh()
-        }
-        .onAppear(perform: {
-            if viewModel.boards.isEmpty {
-                viewModel.fetchBoards()
-            }
-        })
-        
     }
 }
 

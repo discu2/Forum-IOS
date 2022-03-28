@@ -10,7 +10,7 @@ import Combine
 
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account?
-    @Published var accountId = ""
+    @Published var username = ""
     @Published var refreshToken = ""
     @Published var accessToken = ""
     
@@ -18,7 +18,7 @@ class LocalAccountViewModel: ObservableObject {
     
     private let userDefault = UserDefaults.standard
     
-    private let LOCAL_ACCOUNT_ID = "localAccountId"
+    private let LOCAL_USERNAME = "localUsername"
     private let REFRESH_TOKEN = "refreshToken"
     
     let dataFetchable: DataFetchable
@@ -29,8 +29,8 @@ class LocalAccountViewModel: ObservableObject {
         
         self.dataFetchable = dataFetchable
         
-        if let accountId = userDefault.string(forKey: LOCAL_ACCOUNT_ID) {
-            self.accountId = accountId
+        if let username = userDefault.string(forKey: LOCAL_USERNAME) {
+            self.username = username
         }
         
         if let refreshToken = userDefault.string(forKey: REFRESH_TOKEN) {
@@ -74,18 +74,11 @@ class LocalAccountViewModel: ObservableObject {
         
     }
     
-    func fetchAccountData(accountId: String? = nil, username: String? = nil) {
+    func fetchAccountData(username: String) {
         
-        var uriString = "/account/"
+       let uriString = "/account/" + username
         
-        if accountId != nil {
-            uriString = uriString + accountId! + "?type=id"
-        } else if username != nil {
-            uriString = uriString + username!
-        } else { return }
-
-        
-        dataFetchable.fetchApi(uriString: uriString, responsePackageType: Account.self)
+        dataFetchable.fetchApi(uriString: uriString, responsePackageType: AccountResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 switch completion {
@@ -99,9 +92,9 @@ class LocalAccountViewModel: ObservableObject {
                 }
                 
             } receiveValue: { [weak self] (data) in
-                guard let self = self else { return }
+                guard let self = self, let data = data else { return }
                 
-                self.account = data
+                self.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname)
                 self.saveLocalAccount()
             }
             .store(in: &cancellables)
@@ -109,20 +102,17 @@ class LocalAccountViewModel: ObservableObject {
     }
     
     func logout() {
-        userDefault.set("", forKey: LOCAL_ACCOUNT_ID)
+        userDefault.set("", forKey: LOCAL_USERNAME)
         userDefault.set("", forKey: REFRESH_TOKEN)
         refreshToken = ""
         account = nil
-        accountId = ""
         accessToken = ""
     }
     
     func saveLocalAccount() {
+        guard let account = account, refreshToken != "" else { return }
         
-        if let account = account {
-            userDefault.set(account.id, forKey: LOCAL_ACCOUNT_ID)
-        }
-        
+        userDefault.set(account.username, forKey: LOCAL_USERNAME)
         userDefault.set(refreshToken, forKey: REFRESH_TOKEN)
     }
     
@@ -134,5 +124,11 @@ class LocalAccountViewModel: ObservableObject {
     struct TokenResponse: Decodable {
         let accessToken: String
         let refreshToken: String
+    }
+    
+    struct AccountResponse: Decodable {
+        let username: String
+        let nickname: String
+        let roleIds: [String]
     }
 }

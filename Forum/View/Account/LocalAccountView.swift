@@ -94,8 +94,8 @@ struct ProfileView: View {
         }
         .onAppear( perform: {
             
-            if viewModel.account == nil && viewModel.accountId != "" {
-                viewModel.fetchAccountData(accountId: viewModel.accountId)
+            if viewModel.account == nil && viewModel.username != "" {
+                viewModel.fetchAccountData(username: viewModel.username)
             }
 
         })

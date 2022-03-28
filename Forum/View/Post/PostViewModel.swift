@@ -64,7 +64,7 @@ class PostViewModel: ObservableObject {
                 var posts: [Post] = []
                 
                 for p in data {
-                    let textblock = TextBlock(ownerId: p.ownerId, username: p.username, postTime: Date(timeIntervalSince1970: p.postTime/1000), lastEditTime: Date(timeIntervalSince1970: p.lastEditTime/1000), content: p.content, likeUserIds: p.likeUserIds, dislikeUserIds: p.dislikeUserIds)
+                    let textblock = TextBlock(ownerUsername: p.ownerUsername, postTime: Date(timeIntervalSince1970: p.postTime/1000), lastEditTime: Date(timeIntervalSince1970: p.lastEditTime/1000), content: p.content, likeUsers: p.likeUsers, dislikeUsers: p.dislikeUsers)
                     posts.append(Post(id: p.id, textBlock: textblock, topicId: p.topicId, originPost: p.originPost))
                 }
                 
@@ -77,13 +77,12 @@ class PostViewModel: ObservableObject {
     
     struct TopicResponse: Decodable {
         let id: String
-        let ownerId: String
-        let username: String
+        let ownerUsername: String
         let postTime: Double
         let lastEditTime: Double
         let content: String
-        let likeUserIds: [String]
-        let dislikeUserIds: [String]
+        let likeUsers: [String]
+        let dislikeUsers: [String]
         let topicId: String
         let originPost: Bool
     }

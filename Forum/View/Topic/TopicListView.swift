@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct TopicListView: View {
-    @StateObject var viewModel: TopicListViewModel
-    @State var boardId: String
-    @State var boardName: String
+    @StateObject private var viewModel: TopicListViewModel
+    @State private var boardId: String
+    @State private var boardName: String
     
     init(dataFetchable: DataFetchable, boardId: String, boardName: String) {
         self._viewModel = StateObject(wrappedValue: TopicListViewModel(dataFetchable: dataFetchable))
@@ -42,7 +42,7 @@ struct TopicListView: View {
         .refreshable {
             await viewModel.refresh()
         }
-        .onAppear{
+        .onAppear {
             viewModel.boardId = boardId
         }
     }

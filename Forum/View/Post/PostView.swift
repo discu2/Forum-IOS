@@ -27,7 +27,7 @@ struct PostView: View {
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             /*
-             * WIP
+             WIP
              */
         }
         .onAppear(perform: {
@@ -45,7 +45,7 @@ struct TextblockView: View {
         
         VStack(alignment: .leading, spacing: 16) {
             
-            Text(textBlock.username)
+            Text(textBlock.ownerUsername)
                 .font(/*@START_MENU_TOKEN@*/.body/*@END_MENU_TOKEN@*/).bold()
                 .padding(.bottom, 10)
             

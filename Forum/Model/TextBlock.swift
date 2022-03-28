@@ -9,13 +9,12 @@ import Foundation
 
 struct TextBlock {
     
-    let ownerId: String
-    let username: String
+    let ownerUsername: String
     let postTime: Date
     var lastEditTime: Date
     var content: String
-    var likeUserIds: [String]
-    var dislikeUserIds: [String]
+    var likeUsers: [String]
+    var dislikeUsers: [String]
     
 }
 

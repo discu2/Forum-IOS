@@ -11,6 +11,7 @@ import Combine
 class TopicListViewModel: ObservableObject {
     @Published var boardId: String? = nil
     @Published var topics: [Topic] = []
+    
     var refreshing = false
     var page: Int = 1
     
@@ -47,7 +48,7 @@ class TopicListViewModel: ObservableObject {
         fetchTopics(boardId)
         
         while(refreshing) {
-            try? await Task.sleep(nanoseconds: 100000000)
+            try? await Task.sleep(nanoseconds: 10_000_000)
         }
         
     }
@@ -87,7 +88,7 @@ class TopicListViewModel: ObservableObject {
                 var topics: [Topic] = []
                 
                 for r in data {
-                    topics.append(Topic(id: r.id, ownerId: r.ownerId, username: r.username, title: r.title, lastPosterId: r.lastPosterId, lastPostUsername: r.lastPosterUsername, postTime: Date(timeIntervalSince1970: r.lastPostTime/1000), lastPostTime: Date(timeIntervalSince1970: r.lastPostTime/1000), pinned: r.pinnedOrder > 0))
+                    topics.append(Topic(id: r.id, ownerUsername: r.ownerUsername, title: r.title, lastPostUsername: r.lastPosterUsername, postTime: Date(timeIntervalSince1970: r.lastPostTime/1000), lastPostTime: Date(timeIntervalSince1970: r.lastPostTime/1000), pinned: r.pinnedOrder > 0))
                 }
                 
                 self.topics += topics
@@ -99,10 +100,8 @@ class TopicListViewModel: ObservableObject {
     struct TopicResponse: Decodable {
         let id: String
         let boardId: String
-        let ownerId: String
-        let username: String
+        let ownerUsername: String
         let title: String
-        let lastPosterId: String
         let lastPosterUsername: String
 
         let createTime: Double

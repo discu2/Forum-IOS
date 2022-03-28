@@ -10,6 +10,13 @@ import Foundation
 struct Account: Identifiable, Decodable {
     let id: String
     let username: String
-    var roles: [String]
+    var roleIds: [String]
     var nickname: String
+    
+    init(username: String, roleIds: [String], nickname: String) {
+        self.id = UUID().uuidString
+        self.username = username
+        self.roleIds = roleIds
+        self.nickname = nickname
+    }
 }
