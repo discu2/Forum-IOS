@@ -26,14 +26,11 @@ class BoardViewModel: ObservableObject {
         fetchBoards()
         
         while(refreshing) {
-            try? await Task.sleep(nanoseconds: 100000000)
+            try? await Task.sleep(nanoseconds: 10_000_000)
         }
     }
     
     func fetchBoards() {
-        
-        groups.removeAll()
-        boards.removeAll()
         
         var boards: [String: [Board]] = [:]
         var groups: [String] = []

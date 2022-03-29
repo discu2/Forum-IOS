@@ -60,7 +60,6 @@ class TopicListViewModel: ObservableObject {
                 return
             }
             
-            self.topics.removeAll()
             self.fetchTopics(data)
         }
         .store(in: &cancellable)
@@ -91,7 +90,12 @@ class TopicListViewModel: ObservableObject {
                     topics.append(Topic(id: r.id, ownerUsername: r.ownerUsername, title: r.title, lastPostUsername: r.lastPosterUsername, postTime: Date(timeIntervalSince1970: r.lastPostTime/1000), lastPostTime: Date(timeIntervalSince1970: r.lastPostTime/1000), pinned: r.pinnedOrder > 0))
                 }
                 
-                self.topics += topics
+                if self.refreshing != true {
+                    self.topics += topics
+                }
+                
+                self.topics = topics
+                
             }
             .store(in: &cancellable)
         
