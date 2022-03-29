@@ -38,7 +38,8 @@ struct TopicListView: View {
             }
         }
         .listStyle(.plain)
-        .navigationBarTitle(boardName)
+        .navigationTitle(boardName)
+        .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             await viewModel.refresh()
         }
@@ -49,9 +50,9 @@ struct TopicListView: View {
 }
 
 struct TopicView: View {
-    var title: String
-    var lastPostTime: Date
-    var formatter: DateFormatter
+    let title: String
+    let lastPostTime: Date
+    let formatter: DateFormatter
     
     var body: some View {
         

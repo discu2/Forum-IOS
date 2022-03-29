@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct PostView: View {
+    @StateObject private var viewModel: PostViewModel
     @State private var title: String
     @State private var topicId: String
-    @StateObject private var viewModel: PostViewModel
     
     init(dataFetchable: DataFetchable, title: String, topicId: String) {
         self._viewModel = StateObject(wrappedValue: PostViewModel(dataFetchable: dataFetchable))
@@ -23,7 +23,7 @@ struct PostView: View {
             TextblockView(textBlock: item.textBlock)
         }
         .listStyle(.plain)
-        .navigationBarTitle(title)
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
             /*
@@ -39,7 +39,7 @@ struct PostView: View {
 
 
 struct TextblockView: View {
-   var textBlock: TextBlock
+   let textBlock: TextBlock
     
     var body: some View {
         

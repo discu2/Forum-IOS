@@ -23,8 +23,8 @@ struct BoardView: View {
                 .listStyle(.plain)
                 Spacer()
             }
-            .navigationBarTitle("Boards")
-            .navigationViewStyle(.stack)
+            .navigationTitle("Boards")
+            .navigationBarTitleDisplayMode(.automatic)
             .refreshable {
                 await viewModel.refresh()
             }
@@ -39,8 +39,8 @@ struct BoardView: View {
 }
 
 struct GroupView: View {
-    var group: String
-    var boards: [Board] = []
+    let group: String
+    let boards: [Board]
     @State var expanded = false
     @EnvironmentObject var viewModel: BoardViewModel
     
@@ -52,7 +52,9 @@ struct GroupView: View {
                     Text(board.name)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(4)
+                    
                     NavigationLink(destination: TopicListView(dataFetchable: viewModel.dataFetchable, boardId: board.id, boardName: board.name)) {
+                        
                         EmptyView()
                     }
                     .frame(width: 0)
