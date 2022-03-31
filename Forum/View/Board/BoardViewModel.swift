@@ -42,12 +42,14 @@ class BoardViewModel: ObservableObject {
                 switch completion {
                     
                 case .finished:
-                    self?.refreshing = false
+                    break
                     
                 case .failure(let error):
                     print(error)
                     
                 }
+                
+                self?.refreshing = false
                 
             } receiveValue: { [weak self] (data) in
                 guard let self = self, let data = data else {
