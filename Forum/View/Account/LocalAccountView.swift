@@ -75,10 +75,15 @@ struct ProfileView: View {
     
     var body: some View {
         VStack {
-            //            Image("x")
-            //                .resizable()
-            //                .frame(width: 120, height: 120)
-            //                .clipShape(Circle())
+            AsyncImage(url: URL(string: "http://localhost:8080/account/" + viewModel.username + "/profile_pic")) { phase in
+                if let image = phase.image {
+                    image.resizable()
+                } else {
+                    Color.gray
+                }
+            }
+            .frame(width: 120, height: 120)
+            .clipShape(Circle())
             
             Text(viewModel.account != nil ? viewModel.account!.nickname : "some text")
                 .font(.title)
@@ -92,15 +97,12 @@ struct ProfileView: View {
                     .cornerRadius(7)
             }
         }
-        .onAppear( perform: {
-            
+        .onAppear {
             if viewModel.account == nil && viewModel.username != "" {
                 viewModel.fetchAccountData(username: viewModel.username)
             }
-
-        })
+        }
         .redacted(reason: viewModel.account == nil ? .placeholder : [])
-        
     }
 }
 
