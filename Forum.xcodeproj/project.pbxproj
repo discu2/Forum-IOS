@@ -149,21 +149,13 @@
 		0195D37027D62CEA006C0FA8 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2B2FA56F27F5A6620000DA1F /* Component */,
 				2BB8C40727DF701700AB86FE /* Account */,
 				2BB8C40B27DF701700AB86FE /* Board */,
 				0126BE6F27D3937D00D34588 /* Topic */,
 				0144CC7927D5D723005A8B7C /* Post */,
-				0195D37127D62D0A006C0FA8 /* Utils */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		0195D37127D62D0A006C0FA8 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		2B29487127E30B6F007D150D /* Service */ = {
@@ -180,6 +172,14 @@
 				2B29487527E3457F007D150D /* DataFetchable.swift */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		2B2FA56F27F5A6620000DA1F /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */,
+			);
+			path = Component;
 			sourceTree = "<group>";
 		};
 		2BB8C40727DF701700AB86FE /* Account */ = {
