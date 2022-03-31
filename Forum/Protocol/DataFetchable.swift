@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol DataFetchable {
-    func fetchApi<T: Encodable, C: Decodable>(uriString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error>
+    func fetchApi<T: Encodable, C: Decodable>(_ endPointString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error>
     
-    func fetchApi<C: Decodable>(uriString: String, responsePackageType: C.Type) -> Future<C?, Error>
+    func fetchApi<C: Decodable>(_ endPointString: String, responsePackageType: C.Type) -> Future<C?, Error>
 }

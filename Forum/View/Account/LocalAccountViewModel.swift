@@ -47,7 +47,7 @@ class LocalAccountViewModel: ObservableObject {
         
         logining = true
         
-        dataFetchable.fetchApi(uriString: "/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
+        dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
                 switch completion {
@@ -76,9 +76,9 @@ class LocalAccountViewModel: ObservableObject {
     
     func fetchAccountData(username: String) {
         
-       let uriString = "/account/" + username
+       let endPointString = "/account/" + username
         
-        dataFetchable.fetchApi(uriString: uriString, responsePackageType: AccountResponse.self)
+        dataFetchable.fetchApi(endPointString, responsePackageType: AccountResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 switch completion {

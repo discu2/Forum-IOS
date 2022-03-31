@@ -16,9 +16,9 @@ class ApiService: DataFetchable {
         self.urlString = urlString
     }
     
-    func fetchApi<T: Encodable, C: Decodable>(uriString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
+    func fetchApi<T: Encodable, C: Decodable>(_ endPointString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
         
-        let url = URL(string: urlString + uriString)!
+        let url = URL(string: urlString + endPointString)!
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -44,7 +44,7 @@ class ApiService: DataFetchable {
                         }
                     }
                 } else {
-                    promise(.failure(NSError(domain: uriString, code: code)))
+                    promise(.failure(NSError(domain: endPointString, code: code)))
                 }
                 
             }.resume()
@@ -53,9 +53,9 @@ class ApiService: DataFetchable {
     }
     
     
-    func fetchApi<C: Decodable>(uriString: String, responsePackageType: C.Type) -> Future<C?, Error> {
+    func fetchApi<C: Decodable>(_ endPointString: String, responsePackageType: C.Type) -> Future<C?, Error> {
         
-        let url = URL(string: urlString + uriString)!
+        let url = URL(string: urlString + endPointString)!
         
         return Future { promise in
             
@@ -75,7 +75,7 @@ class ApiService: DataFetchable {
                     }
                     
                 } else {
-                    promise(.failure(NSError(domain: uriString, code: code)))
+                    promise(.failure(NSError(domain: endPointString, code: code)))
                 }
             }.resume()
             

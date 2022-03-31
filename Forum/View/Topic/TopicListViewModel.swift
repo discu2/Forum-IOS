@@ -78,7 +78,7 @@ class TopicListViewModel: ObservableObject {
     
     func fetchTopics(_ boardId: String) {
         
-        dataFetchable.fetchApi(uriString: "/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
+        dataFetchable.fetchApi("/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
                 

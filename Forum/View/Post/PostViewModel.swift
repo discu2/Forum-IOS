@@ -44,9 +44,9 @@ class PostViewModel: ObservableObject {
     
     func fetchPosts(_ topicId: String, page: Int) {
         
-        let uriString = "/post/" + topicId + "?page=" + page.description
+        let endPointString = "/post/" + topicId + "?page=" + page.description
         
-        dataFetchable.fetchApi(uriString: uriString, responsePackageType: [TopicResponse].self)
+        dataFetchable.fetchApi(endPointString, responsePackageType: [TopicResponse].self)
             .receive(on: DispatchQueue.main)
             .sink { (completion) in
                 switch completion{

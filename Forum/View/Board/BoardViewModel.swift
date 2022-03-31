@@ -35,7 +35,7 @@ class BoardViewModel: ObservableObject {
         var boards: [String: [Board]] = [:]
         var groups: [String] = []
         
-        dataFetchable.fetchApi(uriString: "/board", responsePackageType: [Board].self)
+        dataFetchable.fetchApi("/board", responsePackageType: [Board].self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
                 
