@@ -32,8 +32,7 @@ struct TopicListView: View {
             }
             .onAppear {
                 if index == viewModel.topics.count-1 {
-                    viewModel.page+=1
-                    viewModel.fetchTopics(boardId)
+                    viewModel.fetchNextPage()
                 }
             }
         }

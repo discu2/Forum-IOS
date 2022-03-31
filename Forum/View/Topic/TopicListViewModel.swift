@@ -11,6 +11,7 @@ import Combine
 class TopicListViewModel: ObservableObject {
     @Published var boardId: String? = nil
     @Published var topics: [Topic] = []
+    @Published var eof: Bool = false
     
     var refreshing = false
     var page: Int = 1
@@ -65,6 +66,16 @@ class TopicListViewModel: ObservableObject {
         .store(in: &cancellable)
     }
     
+    func fetchNextPage() {
+        guard !eof, let boardId = boardId else {
+            return
+        }
+        
+        page += 1
+        fetchTopics(boardId)
+
+    }
+    
     func fetchTopics(_ boardId: String) {
         
         dataFetchable.fetchApi(uriString: "/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
@@ -80,7 +91,9 @@ class TopicListViewModel: ObservableObject {
                 
             } receiveValue: { [weak self] (data) in
                 
-                guard let self = self, let data = data else {
+                guard let self = self, let data = data else { return }
+                guard data.count > 0 else {
+                    self.eof = true
                     return
                 }
                 
@@ -90,8 +103,9 @@ class TopicListViewModel: ObservableObject {
                     topics.append(Topic(id: r.id, ownerUsername: r.ownerUsername, title: r.title, lastPostUsername: r.lastPosterUsername, postTime: Date(timeIntervalSince1970: r.lastPostTime/1000), lastPostTime: Date(timeIntervalSince1970: r.lastPostTime/1000), pinned: r.pinnedOrder > 0))
                 }
                 
-                if self.refreshing != true {
+                if !self.refreshing {
                     self.topics += topics
+                    return
                 }
                 
                 self.topics = topics
