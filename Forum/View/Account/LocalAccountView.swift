@@ -17,7 +17,7 @@ struct LocalAccountView: View {
     var body: some View {
         
         NavigationView {
-            if viewModel.refreshToken == "" {
+            if !viewModel.isLoggedIn {
                 LoginView()
             } else {
                 ProfileView()
@@ -41,28 +41,24 @@ struct LoginView: View {
                 .background(.regularMaterial)
                 .cornerRadius(5.0)
                 .padding(.bottom, 20)
-                .keyboardType(.namePhonePad)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
+                .submitLabel(.return)
             
             SecureField("password", text: $password)
                 .padding()
                 .background(.regularMaterial)
                 .cornerRadius(5.0)
-                .padding(.bottom, 20)
-                .keyboardType(.namePhonePad)
-            
-            Button(action: {
-                login()
-            }) {
-                Text("Login")
-                    .padding(10)
-                    .background(.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(7)
-            }
-            .opacity(viewModel.logining ? 0.5 : 1.0)
-            .disabled(viewModel.logining)
+                .padding(.bottom, 60)
+                .keyboardType(.default)
+                .submitLabel(.go)
+                .onSubmit {
+                    login()
+                }
         }
         .padding(38)
+        
     }
     
     func login() {
@@ -75,7 +71,7 @@ struct ProfileView: View {
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: "http://localhost:8080/account/" + viewModel.username + "/profile_pic")) { phase in
+            AsyncImage(url: URL(string: "http://localhost:8080/account/" + (viewModel.username ?? "") + "/profile_pic?size=1")) { phase in
                 if let image = phase.image {
                     image.resizable()
                 } else {
@@ -95,11 +91,6 @@ struct ProfileView: View {
                     .background(.red)
                     .foregroundColor(.white)
                     .cornerRadius(7)
-            }
-        }
-        .onAppear {
-            if viewModel.account == nil && viewModel.username != "" {
-                viewModel.fetchAccountData(username: viewModel.username)
             }
         }
         .redacted(reason: viewModel.account == nil ? .placeholder : [])

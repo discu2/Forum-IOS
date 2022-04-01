@@ -9,12 +9,11 @@ import SwiftUI
 import Combine
 
 class LocalAccountViewModel: ObservableObject {
-    @Published var account: Account?
-    @Published var username = ""
-    @Published var refreshToken = ""
-    @Published var accessToken = ""
-    
-    @Published var logining = false
+    @Published var account: Account? = nil
+    @Published var username: String? = nil
+    @Published var refreshToken: String? = nil
+    @Published var accessToken: String? = nil
+    @Published var isLoggedIn = false
     
     private let userDefault = UserDefaults.standard
     
@@ -31,44 +30,43 @@ class LocalAccountViewModel: ObservableObject {
         
         if let username = userDefault.string(forKey: LOCAL_USERNAME) {
             self.username = username
+            fetchAccountData(username: username)
         }
         
         if let refreshToken = userDefault.string(forKey: REFRESH_TOKEN) {
             self.refreshToken = refreshToken
+            isLoggedIn = true
         }
-              
     }
     
-//    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
-//
-//    }
+    //    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
+    //
+    //    }
     
     func login(username: String, password: String) {
-        
-        logining = true
         
         dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] (completion) in
+                guard let self = self else { return }
+                
                 switch completion {
                     
                 case .finished:
-                    self?.fetchAccountData(username: username)
-
+                    self.fetchAccountData(username: username)
+                    self.saveLocalAccount()
+                    
                 case .failure(let error):
                     print(error)
-                
                 }
-                
-                self?.logining = false
                 
             } receiveValue: { [weak self] (data) in
                 
                 guard let self = self else { return }
+                self.username = username
                 self.refreshToken = data!.refreshToken
                 self.accessToken = data!.accessToken
                 
-                self.saveLocalAccount()
             }
             .store(in: &cancellables)
         
@@ -76,7 +74,7 @@ class LocalAccountViewModel: ObservableObject {
     
     func fetchAccountData(username: String) {
         
-       let endPointString = "/account/" + username
+        let endPointString = "/account/" + username
         
         dataFetchable.fetchApi(endPointString, responsePackageType: AccountResponse.self)
             .receive(on: DispatchQueue.main)
@@ -95,25 +93,29 @@ class LocalAccountViewModel: ObservableObject {
                 guard let self = self, let data = data else { return }
                 
                 self.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname)
-                self.saveLocalAccount()
             }
             .store(in: &cancellables)
-
+        
     }
     
     func logout() {
-        userDefault.set("", forKey: LOCAL_USERNAME)
-        userDefault.set("", forKey: REFRESH_TOKEN)
-        refreshToken = ""
+        isLoggedIn = false
+        userDefault.removeObject(forKey: LOCAL_USERNAME)
+        userDefault.removeObject(forKey: REFRESH_TOKEN)
+        refreshToken = nil
+        username = nil
         account = nil
-        accessToken = ""
+        accessToken = nil
     }
     
     func saveLocalAccount() {
-        guard let account = account, refreshToken != "" else { return }
+        guard let username = username, let refreshToken = refreshToken else { return }
         
-        userDefault.set(account.username, forKey: LOCAL_USERNAME)
+        userDefault.set(username, forKey: LOCAL_USERNAME)
         userDefault.set(refreshToken, forKey: REFRESH_TOKEN)
+        
+        // Not good
+        isLoggedIn = true
     }
     
     struct LoginBody: Encodable {
