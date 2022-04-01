@@ -126,6 +126,8 @@ class LocalAccountViewModel: ObservableObject {
     struct TokenResponse: Decodable {
         let accessToken: String
         let refreshToken: String
+        let expireDateTime: Double
+        let expireIn: Int
     }
     
     struct AccountResponse: Decodable {

@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-private let dataFetchable = ApiService(urlString: "http://localhost:8080")
+private let apiService = ApiService(urlString: "http://localhost:8080")
 
 @main
 struct ForumApp: App {
     var body: some Scene {
         WindowGroup {
-            ForumIndexView(dataFetchable: dataFetchable)
+            ForumIndexView(dataFetchable: apiService)
         }
     }
 }

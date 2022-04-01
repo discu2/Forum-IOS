@@ -27,6 +27,7 @@
 		2BB8C41127DF706D00AB86FE /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8C40F27DF706D00AB86FE /* BoardView.swift */; };
 		2BB8C41227DF706D00AB86FE /* BoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB8C41027DF706D00AB86FE /* BoardViewModel.swift */; };
 		2BD6ADC227DFA3770065432E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2BD6ADC127DFA3770065432E /* .gitignore */; };
+		2BE2E54027F6E7550018DA1D /* TokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE2E53F27F6E7550018DA1D /* TokenService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,6 +65,7 @@
 		2BB8C40F27DF706D00AB86FE /* BoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		2BB8C41027DF706D00AB86FE /* BoardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewModel.swift; sourceTree = "<group>"; };
 		2BD6ADC127DFA3770065432E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		2BE2E53F27F6E7550018DA1D /* TokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				2B29487227E30B6F007D150D /* ApiService.swift */,
+				2BE2E53F27F6E7550018DA1D /* TokenService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				2B29487327E30B6F007D150D /* ApiService.swift in Sources */,
 				0126BE7327D3C7B400D34588 /* Board.swift in Sources */,
 				2BB8C41127DF706D00AB86FE /* BoardView.swift in Sources */,
+				2BE2E54027F6E7550018DA1D /* TokenService.swift in Sources */,
 				0126BE7527D3CA3D00D34588 /* TextBlock.swift in Sources */,
 				0126BE7127D3938E00D34588 /* TopicListViewModel.swift in Sources */,
 				2B29487627E3457F007D150D /* DataFetchable.swift in Sources */,
