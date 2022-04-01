@@ -16,13 +16,13 @@ enum HttpContentType: String {
 class ApiService: DataFetchable {
     
     let urlString: String
-    var tokenService: TokenService?
+    weak var tokenService: TokenService?
     
     init(urlString: String) {
         self.urlString = urlString
     }
     
-    func sessionHandler<C: Decodable>(data: Data?, response: URLResponse?, error: Error?, responsePackageType: C.Type?, promise: Future<C?, Error>.Promise) {
+    private func sessionHandler<C: Decodable>(data: Data?, response: URLResponse?, error: Error?, responsePackageType: C.Type?, promise: Future<C?, Error>.Promise) {
         
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0
         
@@ -55,17 +55,19 @@ class ApiService: DataFetchable {
             request.setValue(contentType.rawValue, forHTTPHeaderField: "Content-Type")
         }
         
-        if let tokenService = tokenService {
-            if let customToken = customToken {
-                request.setValue("Bearer " + customToken, forHTTPHeaderField: "Authorization")
-            } else {
-                request.setValue("Bearer " + tokenService.accessToken!, forHTTPHeaderField: "Authorization")
-            }
-            
+        if let customToken = customToken {
+            request.setValue("Bearer " + customToken, forHTTPHeaderField: "Authorization")
+            return request
+        }
+        
+        if let accessToken = tokenService?.accessToken {
+            request.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
         }
         
         return request
     }
+    
+    
     
     func fetchApi<T: Encodable, C: Decodable>(_ endPointString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
         
@@ -98,6 +100,10 @@ class ApiService: DataFetchable {
             }.resume()
             
         }
+    }
+    
+    func enableAuth(refreshToken: String) throws -> Void {
+        try tokenService = TokenService.createServiceIfValid(refreshToken: refreshToken, apiService: self)
     }
     
 }
