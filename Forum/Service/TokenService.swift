@@ -7,6 +7,8 @@
 
 import Foundation
 
+struct InvalidTokenError: Error {}
+
 class TokenService {
     private let apiService: ApiService
     private let refreshToken: String?
@@ -16,40 +18,37 @@ class TokenService {
     private init(apiService: ApiService, refreshToken: String) {
         self.apiService = apiService
         self.refreshToken = refreshToken
-        self.fetchAccessToken()
     }
     
-    func fetchAccessToken() {
+    func fetchAccessToken() async throws -> Void {
         
         let url = URL(string: apiService.urlString + "/oauth/refresh_token")!
-        let request = apiService.urlRequestBuilder(url, method: "POST", contentType: .Json, customToken: refreshToken)
+        let request = apiService.urlRequestBuilder(url, contentType: .Json, customToken: refreshToken)
         
-        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-            
-            guard let self = self else { return }
-            
-            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-            
-            if code != 200 {
-                self.accessToken = nil
-                return
-            }
-                
-            if let data = data {
-                do {
-                    let accessTokenPackage = try JSONDecoder().decode(TokenResponse.self, from: data)
-                    self.accessToken = accessTokenPackage.accessToken
-                    self.expireTime = Date(timeIntervalSince1970: accessTokenPackage.expireDateTime/1000)
-                } catch {
-                    self.accessToken = nil
-                }
-            }
-        }.resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw InvalidTokenError()
+        }
+        
+        if let accessTokenPackage = try? JSONDecoder().decode(TokenResponse.self, from: data) {
+            self.accessToken = accessTokenPackage.accessToken
+            self.expireTime = Date(timeIntervalSince1970: accessTokenPackage.expireDateTime/1000)
+            return
+        }
+        
+        throw InvalidTokenError()
     }
     
-    static func createServiceIfVaild(refreshToken: String, apiService: ApiService) -> TokenService? {
+    static func createServiceIfValid(refreshToken: String, apiService: ApiService) throws -> TokenService {
+        
         let service = TokenService(apiService: apiService, refreshToken: refreshToken)
-        return service.accessToken == nil ? nil : service
+        
+        Task {
+            try await service.fetchAccessToken()
+        }
+        
+        return service
     }
     
     struct TokenResponse: Decodable {
