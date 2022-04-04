@@ -10,11 +10,12 @@ import SwiftUI
 struct LocalAccountView: View {
     @StateObject private var viewModel: LocalAccountViewModel
     
-    init(dataFetchable: DataFetchable) {
-        self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable))
+    
+    init(dataFetchable: DataFetchable, authManager: AuthManager) {
+        self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable, authManager: authManager))
     }
     
-    var body: some View {
+    @ViewBuilder var body: some View {
         
         NavigationView {
             if !viewModel.isLoggedIn {
@@ -54,15 +55,11 @@ struct LoginView: View {
                 .keyboardType(.default)
                 .submitLabel(.go)
                 .onSubmit {
-                    login()
+                    viewModel.login(username: username, password: password)
                 }
         }
         .padding(38)
         
-    }
-    
-    func login() {
-        viewModel.login(username: username, password: password)
     }
 }
 
@@ -71,7 +68,7 @@ struct ProfileView: View {
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: "http://localhost:8080/account/" + (viewModel.username ?? "") + "/profile_pic?size=1")) { phase in
+            AsyncImage(url: URL(string: "http://localhost:8080/account/" + (viewModel.account?.username ?? "") + "/profile_pic?size=1")) { phase in
                 if let image = phase.image {
                     image.resizable()
                 } else {
@@ -85,7 +82,9 @@ struct ProfileView: View {
                 .font(.title)
                 .bold()
             
-            Button(action: { viewModel.logout() }) {
+            Button {
+                viewModel.logout()
+            } label: {
                 Text("Logout")
                     .padding(10)
                     .background(.red)
@@ -97,9 +96,9 @@ struct ProfileView: View {
     }
 }
 
-struct AccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        LocalAccountView(dataFetchable: ApiService(urlString: ""))
-        ProfileView()
-    }
-}
+//struct AccountView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        LocalAccountView(dataFetchable: ApiService(urlString: ""), authManager: AuthManager())
+//        ProfileView()
+//    }
+//}

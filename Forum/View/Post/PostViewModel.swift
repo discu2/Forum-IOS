@@ -14,7 +14,7 @@ class PostViewModel: ObservableObject {
     
     let dataFetchable: DataFetchable
     
-    var cancellable = Set<AnyCancellable>()
+    var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable
@@ -23,7 +23,7 @@ class PostViewModel: ObservableObject {
     }
     
     deinit {
-        cancellable.forEach { c in
+        cancellables.forEach { c in
             c.cancel()
         }
     }
@@ -39,7 +39,7 @@ class PostViewModel: ObservableObject {
                 self.posts = []
                 self.fetchPosts(data, page: 1)
             }
-            .store(in: &cancellable)
+            .store(in: &cancellables)
     }
     
     func fetchPosts(_ topicId: String, page: Int) {
@@ -71,7 +71,7 @@ class PostViewModel: ObservableObject {
                 self.posts += posts
                 
             }
-            .store(in: &cancellable)
+            .store(in: &cancellables)
         
     }
     

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 enum HttpContentType: String {
     case Json = "application/json"
@@ -15,8 +16,12 @@ enum HttpContentType: String {
 
 class ApiService: DataFetchable {
     
+    @Published var tokenService: TokenService?
+    var tokenServicePublisher: Published<TokenService?>.Publisher { $tokenService }
+    
     let urlString: String
-    weak var tokenService: TokenService?
+    
+    var cancellables = Set<AnyCancellable>()
     
     init(urlString: String) {
         self.urlString = urlString
@@ -30,7 +35,7 @@ class ApiService: DataFetchable {
             promise(.failure(NSError(domain: "", code: code)))
             return
         }
-            
+        
         if let data = data, let responsePackageType = responsePackageType {
             do {
                 let decoded = try JSONDecoder().decode(responsePackageType, from: data)
@@ -67,8 +72,6 @@ class ApiService: DataFetchable {
         return request
     }
     
-    
-    
     func fetchApi<T: Encodable, C: Decodable>(_ endPointString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
         
         let url = URL(string: urlString + endPointString)!
@@ -102,8 +105,14 @@ class ApiService: DataFetchable {
         }
     }
     
-    func enableAuth(refreshToken: String) throws -> Void {
-        try tokenService = TokenService.createServiceIfValid(refreshToken: refreshToken, apiService: self)
+    func enableAuth() throws -> Void {
+        tokenService = try TokenService(urlString: urlString, urlRequestBuilder: urlRequestBuilder)
+    }
+    
+    func disableAuth() {
+        tokenService = nil
+        
+        //send logout request
     }
     
 }

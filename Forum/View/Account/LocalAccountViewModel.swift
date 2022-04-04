@@ -10,33 +10,25 @@ import Combine
 
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account? = nil
-    @Published var username: String? = nil
-    @Published var refreshToken: String? = nil
-    @Published var accessToken: String? = nil
-    @Published var isLoggedIn = false
-    
-    private let userDefault = UserDefaults.standard
-    
-    private let LOCAL_USERNAME = "localUsername"
-    private let REFRESH_TOKEN = "refreshToken"
+    @Published var isLoggedIn: Bool = false
     
     let dataFetchable: DataFetchable
+    let authManager: AuthManager
+    
+    @AppStorage("localUsername") var localUsername: String?
     
     var cancellables = Set<AnyCancellable>()
     
-    init(dataFetchable: DataFetchable) {
-        
+    init(dataFetchable: DataFetchable, authManager: AuthManager) {
         self.dataFetchable = dataFetchable
+        self.authManager = authManager
         
-        if let username = userDefault.string(forKey: LOCAL_USERNAME) {
-            self.username = username
-            fetchAccountData(username: username)
+        if (dataFetchable.tokenService == nil) {
+            return
         }
         
-        if let refreshToken = userDefault.string(forKey: REFRESH_TOKEN) {
-            self.refreshToken = refreshToken
-            isLoggedIn = true
-        }
+        self.isLoggedIn = true
+        fetchLocalAccountData()
     }
     
     //    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
@@ -44,35 +36,23 @@ class LocalAccountViewModel: ObservableObject {
     //    }
     
     func login(username: String, password: String) {
-        
-        dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] (completion) in
-                guard let self = self else { return }
-                
-                switch completion {
-                    
-                case .finished:
-                    self.fetchAccountData(username: username)
-                    self.saveLocalAccount()
-                    
-                case .failure(let error):
-                    print(error)
-                }
-                
-            } receiveValue: { [weak self] (data) in
-                
-                guard let self = self else { return }
-                self.username = username
-                self.refreshToken = data!.refreshToken
-                self.accessToken = data!.accessToken
-                
-            }
-            .store(in: &cancellables)
+        authManager.login(username: username, password: password) { [weak self] in
+            self?.isLoggedIn = true
+            self?.fetchLocalAccountData()
+        }
+
+    }
+    
+    func logout() {
+        authManager.logout { [weak self] in
+            self?.isLoggedIn = false
+            self?.account = nil
+        }
         
     }
     
-    func fetchAccountData(username: String) {
+    func fetchLocalAccountData() {
+        guard let username = localUsername else { return }
         
         let endPointString = "/account/" + username
         
@@ -96,38 +76,6 @@ class LocalAccountViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-    }
-    
-    func logout() {
-        isLoggedIn = false
-        userDefault.removeObject(forKey: LOCAL_USERNAME)
-        userDefault.removeObject(forKey: REFRESH_TOKEN)
-        refreshToken = nil
-        username = nil
-        account = nil
-        accessToken = nil
-    }
-    
-    func saveLocalAccount() {
-        guard let username = username, let refreshToken = refreshToken else { return }
-        
-        userDefault.set(username, forKey: LOCAL_USERNAME)
-        userDefault.set(refreshToken, forKey: REFRESH_TOKEN)
-        
-        // Not good
-        isLoggedIn = true
-    }
-    
-    struct LoginBody: Encodable {
-        let username: String
-        let password: String
-    }
-    
-    struct TokenResponse: Decodable {
-        let accessToken: String
-        let refreshToken: String
-        let expireDateTime: Double
-        let expireIn: Int
     }
     
     struct AccountResponse: Decodable {

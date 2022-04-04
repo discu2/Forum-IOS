@@ -28,11 +28,6 @@ struct BoardView: View {
             .refreshable {
                 await viewModel.refresh()
             }
-            .onAppear(perform: {
-                if viewModel.boards.isEmpty {
-                    viewModel.fetchBoards()
-                }
-            })
         }
         .navigationViewStyle(.stack)
     }

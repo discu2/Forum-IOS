@@ -8,17 +8,21 @@
 import SwiftUI
 
 struct ForumIndexView: View {
-    @State var dataFetchable: DataFetchable
+    @StateObject var viewModel: ForumIndexViewModel
+    
+    init(dataFetchable: DataFetchable) {
+        self._viewModel = StateObject(wrappedValue: ForumIndexViewModel(dataFetchable: dataFetchable))
+    }
     
     var body: some View {
         TabView {
-            BoardView(dataFetchable: dataFetchable)
+            BoardView(dataFetchable: viewModel.dataFetchable)
                 .tabItem() {
                     Image(systemName: "list.dash")
                 }
                 .tag("board")
             
-            LocalAccountView(dataFetchable: dataFetchable)
+            LocalAccountView(dataFetchable: viewModel.dataFetchable, authManager: viewModel)
                 .tabItem {
                     Image(systemName: "person.fill")
                 }

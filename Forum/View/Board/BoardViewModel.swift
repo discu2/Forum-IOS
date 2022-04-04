@@ -13,12 +13,23 @@ class BoardViewModel: ObservableObject {
     @Published var boards: [String: [Board]] = [:]
     var refreshing = false
     
-    var cancellable = Set<AnyCancellable>()
+    var cancellables = Set<AnyCancellable>()
     
     let dataFetchable: DataFetchable
     
     init(dataFetchable: DataFetchable){
         self.dataFetchable = dataFetchable
+        
+        tokenServiceListener()
+    }
+    
+    func tokenServiceListener() {
+        dataFetchable.tokenServicePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.fetchBoards()
+            }
+            .store(in: &cancellables)
     }
     
     func refresh() async {
@@ -72,7 +83,7 @@ class BoardViewModel: ObservableObject {
                 self.groups = groups
                 
             }
-            .store(in: &cancellable)
+            .store(in: &cancellables)
     }
     
 }
