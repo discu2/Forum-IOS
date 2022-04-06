@@ -11,6 +11,7 @@ struct TopicListView: View {
     @StateObject private var viewModel: TopicListViewModel
     @State private var boardId: String
     @State private var boardName: String
+    @State private var tt: String = ""
     
     init(dataFetchable: DataFetchable, boardId: String, boardName: String) {
         self._viewModel = StateObject(wrappedValue: TopicListViewModel(dataFetchable: dataFetchable))

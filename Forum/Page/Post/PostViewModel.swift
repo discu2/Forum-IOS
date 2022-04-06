@@ -61,7 +61,7 @@ class PostViewModel: ObservableObject {
                     return
                 }
                 
-                var posts: [Post] = []
+                var posts = [Post]()
                 
                 for p in data {
                     let textblock = TextBlock(ownerUsername: p.ownerUsername, postTime: Date(timeIntervalSince1970: p.postTime/1000), lastEditTime: Date(timeIntervalSince1970: p.lastEditTime/1000), content: p.content, likeUsers: p.likeUsers, dislikeUsers: p.dislikeUsers)

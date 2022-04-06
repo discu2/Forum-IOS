@@ -21,6 +21,7 @@ struct PostView: View {
     var body: some View {
         List(viewModel.posts, id: \.id) { item in
             TextblockView(textBlock: item.textBlock)
+            CommentView(dataFetchable: viewModel.dataFetchable, postId: item.id)
         }
         .listStyle(.plain)
         .navigationTitle(title)

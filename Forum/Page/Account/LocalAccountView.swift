@@ -15,7 +15,7 @@ struct LocalAccountView: View {
         self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable, authManager: authManager))
     }
     
-    @ViewBuilder var body: some View {
+    var body: some View {
         
         NavigationView {
             if !viewModel.isLoggedIn {

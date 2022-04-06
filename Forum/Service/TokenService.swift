@@ -23,7 +23,7 @@ class TokenService {
                 return nil
             }
             
-            if expireTime - Date.now.timeIntervalSince1970.binade > 5000 {
+            if expireTime - Date.now.timeIntervalSince1970.binade > 10 {
                 return _accessToken
             }
             

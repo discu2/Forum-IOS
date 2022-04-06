@@ -28,5 +28,5 @@ struct Post: Identifiable {
 struct Comment: Identifiable {
     let id: String
     let textBlock: TextBlock
-    let topicId: String
+    let postId: String
 }

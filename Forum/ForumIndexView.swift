@@ -14,7 +14,7 @@ struct ForumIndexView: View {
         self._viewModel = StateObject(wrappedValue: ForumIndexViewModel(dataFetchable: dataFetchable))
     }
     
-    var body: some View {
+    @ViewBuilder var body: some View {
         TabView {
             BoardView(dataFetchable: viewModel.dataFetchable)
                 .tabItem() {
