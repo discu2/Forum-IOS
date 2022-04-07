@@ -14,6 +14,10 @@ enum HttpContentType: String {
     case FormData = "multipart/form-data"
 }
 
+struct HttpError: Error {
+    let code: Int
+}
+
 class ApiService: DataFetchable {
     
     @Published var tokenService: TokenService?
@@ -32,7 +36,7 @@ class ApiService: DataFetchable {
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0
         
         if code != 200 {
-            promise(.failure(NSError(domain: "", code: code)))
+            promise(.failure(HttpError(code: code)))
             return
         }
         

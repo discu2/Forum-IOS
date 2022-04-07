@@ -11,6 +11,7 @@ import Combine
 class LocalAccountViewModel: ObservableObject {
     @Published var account: Account? = nil
     @Published var isLoggedIn: Bool = false
+    @Published var errorMessage: String? = nil
     
     let dataFetchable: DataFetchable
     let authManager: AuthManager
@@ -31,14 +32,18 @@ class LocalAccountViewModel: ObservableObject {
         fetchLocalAccountData()
     }
     
-    //    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
-    //
-    //    }
+//    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
+//
+//    }
     
     func login(username: String, password: String) {
         authManager.login(username: username, password: password) { [weak self] in
-            self?.isLoggedIn = true
-            self?.fetchLocalAccountData()
+            guard let self = self else { return }
+            self.isLoggedIn = true
+            self.fetchLocalAccountData()
+            self.errorMessage = nil
+        } onFaild: { [weak self] _ in
+            self?.errorMessage = "Failed to login"
         }
 
     }
@@ -58,7 +63,7 @@ class LocalAccountViewModel: ObservableObject {
         
         dataFetchable.fetchApi(endPointString, responsePackageType: AccountResponse.self)
             .receive(on: DispatchQueue.main)
-            .sink { (completion) in
+            .sink { completion in
                 switch completion {
                     
                 case .finished:
@@ -69,7 +74,7 @@ class LocalAccountViewModel: ObservableObject {
                     
                 }
                 
-            } receiveValue: { [weak self] (data) in
+            } receiveValue: { [weak self] data in
                 guard let self = self, let data = data else { return }
                 
                 self.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname)

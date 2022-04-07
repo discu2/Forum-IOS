@@ -37,6 +37,7 @@ struct LoginView: View {
     var body: some View {
         VStack {
             Text("Login").font(.title).bold().padding(.bottom)
+            Text(viewModel.errorMessage ?? " ").font(.callout).foregroundColor(Color.red)
             TextField("username", text: $username)
                 .padding()
                 .background(.regularMaterial)
