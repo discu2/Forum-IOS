@@ -23,6 +23,12 @@ class BoardViewModel: ObservableObject {
         tokenServiceListener()
     }
     
+    deinit {
+        cancellables.forEach {
+            $0.cancel()
+        }
+    }
+    
     func tokenServiceListener() {
         dataFetchable.tokenServicePublisher
             .receive(on: DispatchQueue.main)
@@ -46,15 +52,13 @@ class BoardViewModel: ObservableObject {
         var boards: [String: [Board]] = [:]
         var groups: [String] = []
         
-        dataFetchable.fetchApi("/board", responsePackageType: [Board].self)
+        dataFetchable.fetchApi("/board")
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] (completion) in
-                
+            .decode(type: [Board].self, decoder: JSONDecoder())
+            .sink { [weak self] completion in
                 switch completion {
-                    
                 case .finished:
                     break
-                    
                 case .failure(let error):
                     print(error)
                     
@@ -62,8 +66,8 @@ class BoardViewModel: ObservableObject {
                 
                 self?.refreshing = false
                 
-            } receiveValue: { [weak self] (data) in
-                guard let self = self, let data = data else {
+            } receiveValue: { [weak self] data in
+                guard let self = self else {
                     return
                 }
                 

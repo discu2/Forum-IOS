@@ -32,6 +32,12 @@ class LocalAccountViewModel: ObservableObject {
         fetchLocalAccountData()
     }
     
+    deinit {
+        cancellables.forEach {
+            $0.cancel()
+        }
+    }
+    
     func login(username: String, password: String) {
         authManager.login(username: username, password: password) { [weak self] in
             guard let self = self else { return }
@@ -57,21 +63,20 @@ class LocalAccountViewModel: ObservableObject {
         
         let endPointString = "/account/" + username
         
-        dataFetchable.fetchApi(endPointString, responsePackageType: AccountResponse.self)
+        dataFetchable.fetchApi(endPointString)
             .receive(on: DispatchQueue.main)
+            .decode(type: AccountResponse.self, decoder: JSONDecoder())
             .sink { completion in
                 switch completion {
-                    
                 case .finished:
                     break
                     
                 case .failure(let error):
                     print(error)
-                    
                 }
                 
             } receiveValue: { [weak self] data in
-                guard let self = self, let data = data else { return }
+                guard let self = self else { return }
                 
                 self.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname)
             }

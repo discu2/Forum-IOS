@@ -18,7 +18,7 @@ class TopicListViewModel: ObservableObject {
     
     let dataFetchable: DataFetchable
     var dateFormatter = DateFormatter()
-    var cancellable = Set<AnyCancellable>()
+    var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         
@@ -35,8 +35,8 @@ class TopicListViewModel: ObservableObject {
     }
     
     deinit {
-        cancellable.forEach { c in
-            c.cancel()
+        cancellables.forEach {
+            $0.cancel()
         }
     }
     
@@ -63,7 +63,7 @@ class TopicListViewModel: ObservableObject {
             
             self.fetchTopics(data)
         }
-        .store(in: &cancellable)
+        .store(in: &cancellables)
     }
     
     func fetchNextPage() {
@@ -78,20 +78,20 @@ class TopicListViewModel: ObservableObject {
     
     func fetchTopics(_ boardId: String) {
         
-        dataFetchable.fetchApi("/topic/" + boardId + "?page=" + page.description, responsePackageType: [TopicResponse].self)
+        dataFetchable.fetchApi("/topic/" + boardId + "?page=" + page.description)
             .receive(on: DispatchQueue.main)
+            .decode(type: [TopicResponse].self, decoder: JSONDecoder())
             .sink { [weak self] (completion) in
-                
-                switch completion{
+                switch completion {
                 case .finished:
                     self?.refreshing = false
                 case .failure(let error):
                     print(error)
                 }
                 
-            } receiveValue: { [weak self] (data) in
+            } receiveValue: { [weak self] data in
                 
-                guard let self = self, let data = data else { return }
+                guard let self = self else { return }
                 guard data.count > 0 else {
                     self.eof = true
                     return
@@ -111,7 +111,7 @@ class TopicListViewModel: ObservableObject {
                 self.topics = topics
                 
             }
-            .store(in: &cancellable)
+            .store(in: &cancellables)
         
     }
     

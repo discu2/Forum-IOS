@@ -10,12 +10,13 @@ import Combine
 import SwiftUI
 
 enum HttpContentType: String {
-    case Json = "application/json"
-    case FormData = "multipart/form-data"
+    case json = "application/json"
+    case formData = "multipart/form-data"
 }
 
-struct HttpError: Error {
-    let code: Int
+enum HttpError: Error {
+    case code(Int)
+    case unknow
 }
 
 class ApiService: DataFetchable {
@@ -31,27 +32,21 @@ class ApiService: DataFetchable {
         self.urlString = urlString
     }
     
-    private func sessionHandler<C: Decodable>(data: Data?, response: URLResponse?, error: Error?, responsePackageType: C.Type, promise: Future<C?, Error>.Promise) {
+    private func sessionHandler(data: Data?, response: URLResponse?, error: Error?, promise: Future<Data, Error>.Promise) {
         
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0
         
-        if code != 200 {
-            promise(.failure(HttpError(code: code)))
+        guard code == 200 else {
+            promise(.failure(HttpError.code(code)))
             return
         }
         
-        if let data = data, !(responsePackageType is NoResponse.Type) {
-            do {
-                let decoded = try JSONDecoder().decode(responsePackageType, from: data)
-                promise(.success(decoded))
-            } catch {
-                promise(.failure(error))
-            }
-            
+        if let data = data {
+            promise(.success(data))
             return
         }
-        
-        promise(.success(nil))
+
+        promise(.failure(HttpError.unknow))
     }
     
     func urlRequestBuilder(_ url: URL, method: String = "GET", contentType: HttpContentType?, customToken: String? = nil) -> URLRequest {
@@ -76,54 +71,34 @@ class ApiService: DataFetchable {
         return request
     }
     
-    func fetchApi<T: Encodable, C: Decodable>(_ endPointString: String, method: String ,requestPackage: T, responsePackageType: C.Type) -> Future<C?, Error> {
+    func fetchApi<T: Encodable>(_ endPointString: String, method: String ,requestPackage: T) -> Future<Data, Error> {
         
         let url = URL(string: urlString + endPointString)!
-        var request = urlRequestBuilder(url, method: method, contentType: .Json)
+        var request = urlRequestBuilder(url, method: method, contentType: .json)
         
         let data = try? JSONEncoder().encode(requestPackage)
         request.httpBody = data
         
         return Future { [weak self] promise in
-            
             URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let self = self else { return }
-                self.sessionHandler(data: data, response: response, error: error, responsePackageType: responsePackageType, promise: promise)
-            }.resume()
-            
+                self.sessionHandler(data: data, response: response, error: error, promise: promise)
+            }
+            .resume()
         }
     }
     
-    func fetchApi<T: Encodable>(_ endPointString: String, method: String ,requestPackage: T) -> Future<NoResponse?, Error> {
+    func fetchApi(_ endPointString: String) -> Future<Data, Error> {
         
         let url = URL(string: urlString + endPointString)!
-        var request = urlRequestBuilder(url, method: method, contentType: .Json)
-        
-        let data = try? JSONEncoder().encode(requestPackage)
-        request.httpBody = data
+        let request = urlRequestBuilder(url, contentType: .json)
         
         return Future { [weak self] promise in
-            
             URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let self = self else { return }
-                self.sessionHandler(data: data, response: response, error: error, responsePackageType: NoResponse.self, promise: promise)
-            }.resume()
-            
-        }
-    }
-    
-    func fetchApi<C: Decodable>(_ endPointString: String, responsePackageType: C.Type) -> Future<C?, Error> {
-        
-        let url = URL(string: urlString + endPointString)!
-        let request = urlRequestBuilder(url, contentType: .Json)
-        
-        return Future { [weak self] promise in
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let self = self else { return }
-                self.sessionHandler(data: data, response: response, error: error, responsePackageType: responsePackageType, promise: promise)
-            }.resume()
-            
+                self.sessionHandler(data: data, response: response, error: error, promise: promise)
+            }
+            .resume()
         }
     }
     
@@ -136,7 +111,5 @@ class ApiService: DataFetchable {
         
         //send logout request
     }
-    
-    
     
 }

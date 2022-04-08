@@ -28,6 +28,12 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
         }
     }
     
+    deinit {
+        cancellables.forEach {
+            $0.cancel()
+        }
+    }
+    
     func tokenServiceListener() {
         
         dataFetchable.tokenServicePublisher
@@ -48,8 +54,9 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
         
         var token: String?
         
-        dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password), responsePackageType: TokenResponse.self)
+        dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password))
             .receive(on: DispatchQueue.main)
+            .decode(type: TokenResponse.self, decoder: JSONDecoder())
             .sink { [weak self] (completion) in
                 guard let self = self else { return }
                 
@@ -70,7 +77,7 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
                 }
                 
             } receiveValue: {
-                token = $0!.refreshToken
+                token = $0.refreshToken
             }
             .store(in: &cancellables)
         

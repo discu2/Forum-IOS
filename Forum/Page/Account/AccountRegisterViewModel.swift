@@ -29,6 +29,12 @@ class AccountRegisterViewModel: ObservableObject {
         readyRegisterListener()
     }
     
+    deinit {
+        cancellables.forEach {
+            $0.cancel()
+        }
+    }
+    
     func readyRegisterListener() {
         $email
             .debounce(for: 1.5, scheduler: DispatchQueue.main)
@@ -58,6 +64,7 @@ class AccountRegisterViewModel: ObservableObject {
                     vmCompletion(error)
                     print(error)
                 }
+                
             } receiveValue: { _ in }
             .store(in: &cancellables)
 

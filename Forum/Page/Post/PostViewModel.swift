@@ -23,8 +23,8 @@ class PostViewModel: ObservableObject {
     }
     
     deinit {
-        cancellables.forEach { c in
-            c.cancel()
+        cancellables.forEach {
+            $0.cancel()
         }
     }
     
@@ -46,8 +46,9 @@ class PostViewModel: ObservableObject {
         
         let endPointString = "/post/" + topicId + "?page=" + page.description
         
-        dataFetchable.fetchApi(endPointString, responsePackageType: [TopicResponse].self)
+        dataFetchable.fetchApi(endPointString)
             .receive(on: DispatchQueue.main)
+            .decode(type: [TopicResponse].self, decoder: JSONDecoder())
             .sink { (completion) in
                 switch completion{
                 case .finished:
@@ -57,7 +58,7 @@ class PostViewModel: ObservableObject {
                 }
                 
             } receiveValue: { [weak self] (data) in
-                guard let self = self, let data = data else {
+                guard let self = self else {
                     return
                 }
                 

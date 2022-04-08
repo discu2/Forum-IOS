@@ -21,9 +21,16 @@ class CommentViewModel: ObservableObject {
         self.dataFetchable = dataFetchable
     }
     
+    deinit {
+        cancellables.forEach {
+            $0.cancel()
+        }
+    }
+    
     func fetchComments() {
-        dataFetchable.fetchApi("/comment/" + postId + "?page=1", responsePackageType: [CommentResponse].self)
+        dataFetchable.fetchApi("/comment/" + postId + "?page=1")
             .receive(on: DispatchQueue.main)
+            .decode(type: [CommentResponse].self, decoder: JSONDecoder())
             .sink { completion in
                 switch completion {
                 case .finished:
@@ -32,8 +39,6 @@ class CommentViewModel: ObservableObject {
                     print(error)
                 }
             } receiveValue: { [weak self] data in
-                guard let data = data else { return }
-                
                 var comments = [Comment]()
                 
                 for comment in data {

@@ -48,7 +48,7 @@ class TokenService {
     func fetchAccessToken() throws {
         
         let url = URL(string: urlString + "/oauth/refresh_token")!
-        let request = self.urlRequestBuilder(url, "GET", .Json, refreshToken)
+        let request = self.urlRequestBuilder(url, "GET", .json, refreshToken)
         let semaphore = DispatchSemaphore(value: 0)
         
         var throwable: Error?

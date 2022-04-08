@@ -79,7 +79,7 @@ struct AccountRegisterView: View {
                     .frame(width: 32, height: 32)
             }
             .padding(.bottom, 60)
-            .buttonStyle(.bordered)
+            .buttonStyle(.borderedProminent)
             .disabled(!viewModel.readyToRegister)
             .alert("Register succeced!", isPresented: $registerAlertPoped) {
                 Button("OK") {
