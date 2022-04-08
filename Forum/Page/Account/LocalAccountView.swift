@@ -17,7 +17,7 @@ struct LocalAccountView: View {
     
     var body: some View {
         
-        NavigationView {
+        VStack {
             if !viewModel.isLoggedIn {
                 LoginView()
             } else {
@@ -32,12 +32,27 @@ struct LocalAccountView: View {
 struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
+    @State private var isRegisterViewPoped = false
     @EnvironmentObject var viewModel: LocalAccountViewModel
     
     var body: some View {
+        
+        Button("Register") {
+            isRegisterViewPoped.toggle()
+        }
+        .popover(isPresented: $isRegisterViewPoped) {
+            AccountRegisterView(dataFetchable: viewModel.dataFetchable, isRegisterViewPoped: $isRegisterViewPoped)
+        }
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding()
+        
+        Spacer()
+        
         VStack {
             Text("Login").font(.title).bold().padding(.bottom)
+            
             Text(viewModel.errorMessage ?? " ").font(.callout).foregroundColor(Color.red)
+            
             TextField("username", text: $username)
                 .padding()
                 .background(.regularMaterial)
@@ -61,6 +76,7 @@ struct LoginView: View {
         }
         .padding(38)
         
+        Spacer()
     }
 }
 

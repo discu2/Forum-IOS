@@ -32,10 +32,6 @@ class LocalAccountViewModel: ObservableObject {
         fetchLocalAccountData()
     }
     
-//    func register(username: String, password: String, mail: String, nickname: String) -> Bool {
-//
-//    }
-    
     func login(username: String, password: String) {
         authManager.login(username: username, password: password) { [weak self] in
             guard let self = self else { return }
