@@ -10,15 +10,15 @@ import Combine
 
 class TopicListViewModel: ObservableObject {
     @Published var boardId: String? = nil
-    @Published var topics: [Topic] = []
-    @Published var eof: Bool = false
+    @Published private(set) var topics: [Topic] = []
+    @Published private(set) var eof: Bool = false
     
-    var refreshing = false
-    var page: Int = 1
+    private var refreshing = false
+    private(set) var page: Int = 1
     
     let dataFetchable: DataFetchable
-    var dateFormatter = DateFormatter()
-    var cancellables = Set<AnyCancellable>()
+    private(set) var dateFormatter = DateFormatter()
+    private var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         

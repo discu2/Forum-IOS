@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct CommentView: View {
-    @StateObject var viewModel: CommentViewModel
-    @Binding var isCommentPoped: Bool
+    @StateObject private var viewModel: CommentViewModel
+    @Binding private var isCommentPoped: Bool
     
     init(dataFetchable: DataFetchable, postId: String, isCommentPoped: Binding<Bool>) {
         self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable))
@@ -44,7 +44,7 @@ struct CommentView: View {
 }
 
 struct PreviewCommentBlock: View {
-    @StateObject var viewModel: CommentViewModel
+    @StateObject private var viewModel: CommentViewModel
     
     init(dataFetchable: DataFetchable, postId: String) {
         self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable))
@@ -76,7 +76,7 @@ struct PreviewCommentBlock: View {
 
 struct CommentBlock: View {
     let textBlock: TextBlock
-    @EnvironmentObject var viewModel: CommentViewModel
+    @EnvironmentObject private var viewModel: CommentViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

@@ -10,7 +10,6 @@ import SwiftUI
 struct LocalAccountView: View {
     @StateObject private var viewModel: LocalAccountViewModel
     
-    
     init(dataFetchable: DataFetchable, authManager: AuthManager) {
         self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable, authManager: authManager))
     }
@@ -33,7 +32,7 @@ struct LoginView: View {
     @State private var username = ""
     @State private var password = ""
     @State private var isRegisterViewPoped = false
-    @EnvironmentObject var viewModel: LocalAccountViewModel
+    @EnvironmentObject private var viewModel: LocalAccountViewModel
     
     var body: some View {
         
@@ -81,7 +80,7 @@ struct LoginView: View {
 }
 
 struct ProfileView: View {
-    @EnvironmentObject var viewModel: LocalAccountViewModel
+    @EnvironmentObject private var viewModel: LocalAccountViewModel
     
     var body: some View {
         VStack {

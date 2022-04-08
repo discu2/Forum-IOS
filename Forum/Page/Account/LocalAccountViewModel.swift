@@ -9,16 +9,16 @@ import SwiftUI
 import Combine
 
 class LocalAccountViewModel: ObservableObject {
-    @Published var account: Account? = nil
-    @Published var isLoggedIn: Bool = false
-    @Published var errorMessage: String? = nil
+    @Published private(set) var account: Account? = nil
+    @Published private(set) var isLoggedIn: Bool = false
+    @Published private(set) var errorMessage: String? = nil
     
     let dataFetchable: DataFetchable
-    let authManager: AuthManager
+    private let authManager: AuthManager
     
     @AppStorage("localUsername") var localUsername: String?
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable, authManager: AuthManager) {
         self.dataFetchable = dataFetchable

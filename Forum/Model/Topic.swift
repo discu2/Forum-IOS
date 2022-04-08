@@ -15,5 +15,4 @@ struct Topic: Identifiable {
     let postTime: Date
     let lastPostTime: Date
     let pinned: Bool
-    //var shortContent: String
 }

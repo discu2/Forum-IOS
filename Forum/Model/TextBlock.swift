@@ -8,14 +8,12 @@
 import Foundation
 
 struct TextBlock {
-    
     let ownerUsername: String
     let postTime: Date
     var lastEditTime: Date
     var content: String
     var likeUsers: [String]
     var dislikeUsers: [String]
-    
 }
 
 struct Post: Identifiable {

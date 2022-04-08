@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ForumIndexView: View {
-    @StateObject var viewModel: ForumIndexViewModel
+    @StateObject private var viewModel: ForumIndexViewModel
     
     init(dataFetchable: DataFetchable) {
         self._viewModel = StateObject(wrappedValue: ForumIndexViewModel(dataFetchable: dataFetchable))
     }
     
-    @ViewBuilder var body: some View {
+    var body: some View {
         TabView {
             BoardView(dataFetchable: viewModel.dataFetchable)
                 .tabItem() {

@@ -19,5 +19,4 @@ struct Board: Identifiable, Decodable {
     var name: String
     var groupName: String
     
-    
 }

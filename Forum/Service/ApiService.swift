@@ -21,12 +21,12 @@ enum HttpError: Error {
 
 class ApiService: DataFetchable {
     
-    @Published var tokenService: TokenService?
+    @Published private(set) var tokenService: TokenService?
     var tokenServicePublisher: Published<TokenService?>.Publisher { $tokenService }
     
     let urlString: String
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     init(urlString: String) {
         self.urlString = urlString

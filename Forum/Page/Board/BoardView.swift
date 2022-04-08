@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BoardView: View {
-    @StateObject var viewModel: BoardViewModel
+    @StateObject private var viewModel: BoardViewModel
     
     init(dataFetchable: DataFetchable) {
         self._viewModel = StateObject(wrappedValue: BoardViewModel(dataFetchable: dataFetchable))
@@ -36,8 +36,8 @@ struct BoardView: View {
 struct GroupView: View {
     let group: String
     let boards: [Board]
-    @State var expanded = false
-    @EnvironmentObject var viewModel: BoardViewModel
+    @State private var expanded = false
+    @EnvironmentObject private var viewModel: BoardViewModel
     
     var body: some View {
         

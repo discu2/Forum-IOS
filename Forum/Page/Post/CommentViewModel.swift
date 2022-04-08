@@ -10,11 +10,11 @@ import Combine
 
 class CommentViewModel: ObservableObject {
     @Published var postId: String
-    @Published var comments = [Comment]()
+    @Published private(set) var comments = [Comment]()
     
     let dataFetchable: DataFetchable
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     init(postId: String, dataFetchable: DataFetchable) {
         self.postId = postId

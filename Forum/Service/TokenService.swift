@@ -15,7 +15,7 @@ class TokenService {
     private var expireTime: Double?
     private var _accessToken: String?
     
-    private var urlRequestBuilder: (URL, String, HttpContentType?, String?) -> URLRequest
+    private let urlRequestBuilder: (URL, String, HttpContentType?, String?) -> URLRequest
     
     var accessToken: String? {
         get {
@@ -32,7 +32,7 @@ class TokenService {
         }
     }
     
-    let REFRESH_TOKEN = "refreshToken"
+    private let REFRESH_TOKEN = "refreshToken"
     
     
     init(urlString: String, urlRequestBuilder: @escaping (URL, String, HttpContentType?, String?) -> URLRequest) throws {

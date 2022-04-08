@@ -13,20 +13,20 @@ class AccountRegisterViewModel: ObservableObject {
     @Published var username: String = ""
     @Published var password: String = ""
     
-    @Published var readyToRegister = false
+    @Published private(set) var readyToRegister = false
     
     let dataFetchable: DataFetchable
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
-    let mailRegex = try! NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,6}$", options: .caseInsensitive)
-    let passwordRegex = try! NSRegularExpression(pattern: "^(?=.*[0-9])(?=.*[A-Z])(?=\\S+$).{8,64}$", options: .caseInsensitive)
-    let usernameRegex = try! NSRegularExpression(pattern: "^[A-Z0-9._].{4,16}$", options: .caseInsensitive)
+    private let mailRegex = try! NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,6}$", options: .caseInsensitive)
+    private let passwordRegex = try! NSRegularExpression(pattern: "^(?=.*[0-9])(?=.*[A-Z])(?=\\S+$).{8,64}$", options: .caseInsensitive)
+    private let usernameRegex = try! NSRegularExpression(pattern: "^[A-Z0-9._].{4,16}$", options: .caseInsensitive)
     
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable
         
-        readyRegisterListener()
+        textInputListener()
     }
     
     deinit {
@@ -35,7 +35,7 @@ class AccountRegisterViewModel: ObservableObject {
         }
     }
     
-    func readyRegisterListener() {
+    private func textInputListener() {
         $email
             .debounce(for: 1.5, scheduler: DispatchQueue.main)
             .combineLatest($username, $password)

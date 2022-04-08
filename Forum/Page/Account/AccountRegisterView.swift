@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct AccountRegisterView: View {
-    @StateObject var viewModel: AccountRegisterViewModel
-    @State var errorMessage = " "
+    @StateObject private var viewModel: AccountRegisterViewModel
+    @State private var errorMessage = " "
     
-    @State var registerAlertPoped = false
-    @Binding var isRegisterViewPoped: Bool
+    @State private var registerAlertPoped = false
+    @Binding private var isRegisterViewPoped: Bool
     
     init(dataFetchable: DataFetchable, isRegisterViewPoped: Binding<Bool>) {
         self._viewModel = StateObject(wrappedValue: AccountRegisterViewModel(dataFetchable: dataFetchable))

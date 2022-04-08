@@ -10,11 +10,11 @@ import Combine
 
 class PostViewModel: ObservableObject {
     @Published var topicId: String? = nil
-    @Published var posts: [Post] = []
+    @Published private(set) var posts: [Post] = []
     
     let dataFetchable: DataFetchable
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable

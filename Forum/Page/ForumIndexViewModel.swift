@@ -11,10 +11,10 @@ import Combine
 class ForumIndexViewModel: ObservableObject, AuthManager {
     let dataFetchable: DataFetchable
     
-    @AppStorage("localUsername") var localUsername: String?
-    @AppStorage("refreshToken") var refreshToken: String?
+    @AppStorage("localUsername") private var localUsername: String?
+    @AppStorage("refreshToken") private var refreshToken: String?
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable

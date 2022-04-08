@@ -9,11 +9,11 @@ import SwiftUI
 import Combine
 
 class BoardViewModel: ObservableObject {
-    @Published var groups: [String] = []
-    @Published var boards: [String: [Board]] = [:]
-    var refreshing = false
+    @Published private(set) var groups: [String] = []
+    @Published private(set) var boards: [String: [Board]] = [:]
+    private var refreshing = false
     
-    var cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     
     let dataFetchable: DataFetchable
     

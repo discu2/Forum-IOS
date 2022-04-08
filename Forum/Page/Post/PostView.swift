@@ -42,8 +42,8 @@ struct PostView: View {
 struct TextblockView: View {
     let textBlock: TextBlock
     let id: String
-    @EnvironmentObject var viewModel: PostViewModel
-    @State var isCommentPoped = false
+    @EnvironmentObject private var viewModel: PostViewModel
+    @State private var isCommentPoped = false
     
     var body: some View {
         
