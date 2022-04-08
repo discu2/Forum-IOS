@@ -20,8 +20,7 @@ struct PostView: View {
     
     var body: some View {
         List(viewModel.posts, id: \.id) { item in
-            TextblockView(textBlock: item.textBlock)
-            CommentView(dataFetchable: viewModel.dataFetchable, postId: item.id)
+            TextblockView(textBlock: item.textBlock, id: item.id)
         }
         .listStyle(.plain)
         .navigationTitle(title)
@@ -34,13 +33,17 @@ struct PostView: View {
         .onAppear(perform: {
             viewModel.topicId = topicId
         })
+        .environmentObject(viewModel)
         
     }
 }
 
 
 struct TextblockView: View {
-   let textBlock: TextBlock
+    let textBlock: TextBlock
+    let id: String
+    @EnvironmentObject var viewModel: PostViewModel
+    @State var isCommentPoped = false
     
     var body: some View {
         
@@ -52,11 +55,20 @@ struct TextblockView: View {
             
             Text(textBlock.content)
                 .font(.body)
+
+            Button {
+                isCommentPoped.toggle()
+            } label: {
+                PreviewCommentBlock(dataFetchable: viewModel.dataFetchable, postId: id)
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $isCommentPoped) {
+                CommentView(dataFetchable: viewModel.dataFetchable, postId: id, isCommentPoped: $isCommentPoped)
+            }
             
             Spacer()
         }
         
-        .padding(10)
     }
     
 }

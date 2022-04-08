@@ -8,7 +8,7 @@
 import Foundation
 
 protocol AuthManager {
-    func login(username: String, password: String, onFinished: @escaping () -> Void, onFaild: @escaping (_: Error) -> Void) -> Void
+    func login(username: String, password: String, onFinished: @escaping () -> Void, onFaild: @escaping (Error) -> Void) -> Void
     
     func login(username: String, password: String, onFinished: @escaping () -> Void) -> Void
     

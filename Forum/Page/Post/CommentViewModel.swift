@@ -22,7 +22,7 @@ class CommentViewModel: ObservableObject {
     }
     
     func fetchComments() {
-        dataFetchable.fetchApi("/commnet/" + postId + "?page=1", responsePackageType: [CommentResponse].self)
+        dataFetchable.fetchApi("/comment/" + postId + "?page=1", responsePackageType: [CommentResponse].self)
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {

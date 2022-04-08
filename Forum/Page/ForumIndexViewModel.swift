@@ -63,7 +63,6 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
                         onFinished()
                     } catch {
                         onFaild(error)
-                        print(error)
                     }
                     
                 case .failure(let error):
