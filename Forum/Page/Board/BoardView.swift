@@ -48,7 +48,7 @@ struct GroupView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(4)
                     
-                    NavigationLink(destination: TopicListView(dataFetchable: viewModel.dataFetchable, boardId: board.id, boardName: board.name)) {
+                    NavigationLink(destination: LazyNavigationView(TopicListView(dataFetchable: viewModel.dataFetchable, boardId: board.id, boardName: board.name))) {
                         
                         EmptyView()
                     }

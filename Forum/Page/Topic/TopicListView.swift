@@ -11,7 +11,6 @@ struct TopicListView: View {
     @StateObject private var viewModel: TopicListViewModel
     @State private var boardId: String
     @State private var boardName: String
-    @State private var tt: String = ""
     
     init(dataFetchable: DataFetchable, boardId: String, boardName: String) {
         self._viewModel = StateObject(wrappedValue: TopicListViewModel(dataFetchable: dataFetchable))
@@ -24,7 +23,7 @@ struct TopicListView: View {
             HStack {
                 TopicView(title: viewModel.topics[index].title, lastPostTime: viewModel.topics[index].lastPostTime, formatter: viewModel.dateFormatter)
                 
-                NavigationLink(destination: PostView(dataFetchable: viewModel.dataFetchable, title: viewModel.topics[index].title, topicId: viewModel.topics[index].id)) {
+                NavigationLink(destination: LazyNavigationView(PostView(dataFetchable: viewModel.dataFetchable, title: viewModel.topics[index].title, topicId: viewModel.topics[index].id))) {
                     
                     EmptyView()
                 }

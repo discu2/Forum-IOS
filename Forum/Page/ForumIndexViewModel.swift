@@ -15,10 +15,14 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
     @AppStorage("refreshToken") private var refreshToken: String?
     
     private var cancellables = Set<AnyCancellable>()
+    private var authServiceLoaded = false
     
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable
         self.tokenServiceListener()
+        
+        print(localUsername)
+        print(refreshToken)
         
         do {
             try self.dataFetchable.enableAuth()
@@ -42,8 +46,14 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
                 guard let self = self else { return }
                 
                 if service == nil {
-                    self.refreshToken = nil
-                    self.localUsername = nil
+                    if self.authServiceLoaded {
+                        self.refreshToken = nil
+                        self.localUsername = nil
+                        self.authServiceLoaded = false
+                        return
+                    }
+                    
+                    self.authServiceLoaded = true
                 }
             }
             .store(in: &cancellables)
