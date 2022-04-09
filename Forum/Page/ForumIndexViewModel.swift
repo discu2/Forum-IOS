@@ -21,9 +21,6 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
         self.dataFetchable = dataFetchable
         self.tokenServiceListener()
         
-        print(localUsername)
-        print(refreshToken)
-        
         do {
             try self.dataFetchable.enableAuth()
         } catch {
