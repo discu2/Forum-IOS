@@ -19,27 +19,16 @@ struct CommentView: View {
     }
     
     var body: some View {
-        
-        ZStack {
-            Color.secondary
-            
-            Text("Comments")
-            Button {
-                isCommentPoped.toggle()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.primary)
-                    .padding()
+        NavigationView {
+            List(viewModel.comments, id:\.id) { comment in
+                CommentBlock(textBlock: comment.textBlock)
+                    .environmentObject(viewModel)
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .onAppear { viewModel.fetchComments() }
+            .navigationTitle("Comment")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(trailing: Image(systemName: "xmark").foregroundColor(.primary))
         }
-        .frame(maxHeight: 40)
-        
-        List(viewModel.comments, id:\.id) { comment in
-            CommentBlock(textBlock: comment.textBlock)
-                .environmentObject(viewModel)
-        }
-        .onAppear { viewModel.fetchComments() }
         
     }
 }
@@ -69,9 +58,8 @@ struct PreviewCommentBlock: View {
         .onAppear {
             viewModel.fetchComments()
         }
-        
-        //.padding(.horizontal)
         .padding(.vertical, 5)
+        
     }
 }
 
@@ -83,8 +71,8 @@ struct CommentBlock: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 avatarBuilder
-                .frame(width: 32, height: 32)
-                .clipShape(Circle())
+                    .frame(width: 32, height: 32)
+                    .clipShape(Circle())
                 
                 Text(textBlock.ownerUsername)
                     .bold()
@@ -97,7 +85,7 @@ struct CommentBlock: View {
             Text(textBlock.content)
                 .lineLimit(3)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
+            
             HStack {
                 Image(systemName: "hand.thumbsup").resizable()
                     .frame(width: 13, height: 13)

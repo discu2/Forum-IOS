@@ -34,6 +34,8 @@ struct LoginView: View {
     @State private var isRegisterViewPoped = false
     @EnvironmentObject private var viewModel: LocalAccountViewModel
     
+    @FocusState private var passwordFocused: Bool
+    
     var body: some View {
         
         Button("Register") {
@@ -61,6 +63,9 @@ struct LoginView: View {
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
                 .submitLabel(.return)
+                .onSubmit {
+                    passwordFocused.toggle()
+                }
             
             SecureField("password", text: $password)
                 .padding()
@@ -69,6 +74,7 @@ struct LoginView: View {
                 .padding(.bottom, 60)
                 .keyboardType(.default)
                 .submitLabel(.go)
+                .focused($passwordFocused)
                 .onSubmit {
                     viewModel.login(username: username, password: password)
                 }

@@ -14,23 +14,19 @@ struct AccountRegisterView: View {
     @State private var registerAlertPoped = false
     @Binding private var isRegisterViewPoped: Bool
     
+    private enum Field: Hashable {
+        case EMAIL, USERNAME, PASSWORD
+    }
+    
+    @FocusState private var focusedField: Field?
+    
     init(dataFetchable: DataFetchable, isRegisterViewPoped: Binding<Bool>) {
         self._viewModel = StateObject(wrappedValue: AccountRegisterViewModel(dataFetchable: dataFetchable))
         self._isRegisterViewPoped = isRegisterViewPoped
     }
     
     var body: some View {
-        Button {
-            isRegisterViewPoped.toggle()
-        } label: {
-            Image(systemName: "xmark")
-                .foregroundColor(.primary)
-                .padding()
-        }
-        .frame(maxWidth: .infinity, alignment: .trailing)
-        
-        Spacer()
-        
+
         VStack {
             Text("Register").font(.title).bold().padding(.bottom)
             
@@ -47,6 +43,10 @@ struct AccountRegisterView: View {
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
                 .submitLabel(.return)
+                .onSubmit {
+                    focusedField = .USERNAME
+                }
+                .focused($focusedField, equals: .EMAIL)
             
             TextField("username", text: $viewModel.username)
                 .padding()
@@ -55,8 +55,12 @@ struct AccountRegisterView: View {
                 .padding(.bottom, 20)
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
-                .keyboardType(.emailAddress)
+                .keyboardType(.default)
                 .submitLabel(.return)
+                .onSubmit {
+                    focusedField = .PASSWORD
+                }
+                .focused($focusedField, equals: .USERNAME)
             
             SecureField("password", text: $viewModel.password)
                 .padding()
@@ -65,6 +69,7 @@ struct AccountRegisterView: View {
                 .padding(.bottom, 20)
                 .keyboardType(.default)
                 .submitLabel(.return)
+                .focused($focusedField, equals: .PASSWORD)
             
             Button {
                 viewModel.register { error in
@@ -78,7 +83,7 @@ struct AccountRegisterView: View {
                 Image(systemName: "arrow.right")
                     .frame(width: 32, height: 32)
             }
-            .padding(.bottom, 60)
+            .padding(.bottom, 20)
             .buttonStyle(.borderedProminent)
             .disabled(!viewModel.readyToRegister)
             .alert("Register succeced!", isPresented: $registerAlertPoped) {
@@ -91,8 +96,11 @@ struct AccountRegisterView: View {
             
         }
         .padding(38)
-        
-        Spacer()
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                focusedField = .EMAIL
+            }
+        }
     }
 }
 
