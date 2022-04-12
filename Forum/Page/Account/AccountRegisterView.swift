@@ -97,7 +97,7 @@ struct AccountRegisterView: View {
         }
         .padding(38)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 focusedField = .EMAIL
             }
         }

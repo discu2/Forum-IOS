@@ -32,12 +32,10 @@ class TokenService {
         }
     }
     
-    private let REFRESH_TOKEN = "refreshToken"
-    
+    private let keychainService = KeychainService()
     
     init(urlString: String, urlRequestBuilder: @escaping (URL, String, HttpContentType?, String?) -> URLRequest) throws {
-        guard let refreshToken = UserDefaults.standard.string(forKey: REFRESH_TOKEN) else { throw InvalidTokenError() }
-        
+        guard let refreshToken = keychainService.readRefreshToken() else { throw InvalidTokenError() }
         self.urlString = urlString
         self.refreshToken = refreshToken
         self.urlRequestBuilder = urlRequestBuilder

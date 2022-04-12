@@ -21,6 +21,7 @@
 		0195D37327D62D39006C0FA8 /* ForumNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */; };
 		2B29487327E30B6F007D150D /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B29487227E30B6F007D150D /* ApiService.swift */; };
 		2B29487627E3457F007D150D /* DataFetchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B29487527E3457F007D150D /* DataFetchable.swift */; };
+		2B36518B2805E1CC00F7D779 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B36518A2805E1CC00F7D779 /* KeychainService.swift */; };
 		2B58C70B2804543B007FFBB3 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 2B58C70A2804543B007FFBB3 /* CachedAsyncImage */; };
 		2B58C70E280454AD007FFBB3 /* URLCacheExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */; };
 		2B58C7102804580B007FFBB3 /* AccountDetailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */; };
@@ -69,6 +70,7 @@
 		0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumNavBarView.swift; sourceTree = "<group>"; };
 		2B29487227E30B6F007D150D /* ApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		2B29487527E3457F007D150D /* DataFetchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFetchable.swift; sourceTree = "<group>"; };
+		2B36518A2805E1CC00F7D779 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCacheExtension.swift; sourceTree = "<group>"; };
 		2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailService.swift; sourceTree = "<group>"; };
 		2B9FB7E827FF313200D37DD7 /* AccountRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRegisterView.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				2B29487227E30B6F007D150D /* ApiService.swift */,
 				2BE2E53F27F6E7550018DA1D /* TokenService.swift */,
 				2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */,
+				2B36518A2805E1CC00F7D779 /* KeychainService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				0195D37327D62D39006C0FA8 /* ForumNavBarView.swift in Sources */,
 				2BB8C40C27DF701700AB86FE /* LocalAccountViewModel.swift in Sources */,
 				0126BE7727D3CEF200D34588 /* Account.swift in Sources */,
+				2B36518B2805E1CC00F7D779 /* KeychainService.swift in Sources */,
 				2BB8C41227DF706D00AB86FE /* BoardViewModel.swift in Sources */,
 				2B9FB7EB27FF318200D37DD7 /* AccountRegisterViewModel.swift in Sources */,
 			);

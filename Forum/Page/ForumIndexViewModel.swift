@@ -12,19 +12,21 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
     let dataFetchable: DataFetchable
     
     @AppStorage("localUsername") private var localUsername: String?
-    @AppStorage("refreshToken") private var refreshToken: String?
     
     private var cancellables = Set<AnyCancellable>()
     private var authServiceLoaded = false
     
+    private let keychainService: KeychainService
+    
     init(dataFetchable: DataFetchable) {
         self.dataFetchable = dataFetchable
+        self.keychainService = KeychainService()
         self.tokenServiceListener()
         
         do {
             try self.dataFetchable.enableAuth()
         } catch {
-            refreshToken = nil
+            keychainService.deleteRefreshToken()
             localUsername = nil
         }
     }
@@ -44,7 +46,7 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
                 
                 if service == nil {
                     if self.authServiceLoaded {
-                        self.refreshToken = nil
+                        self.keychainService.deleteRefreshToken()
                         self.localUsername = nil
                         self.authServiceLoaded = false
                         return
@@ -59,32 +61,29 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
     
     func login(username: String, password: String, onFinished: @escaping () -> Void, onFaild: @escaping (Error) -> Void) {
         
-        var token: String?
-        
         dataFetchable.fetchApi("/account/login", method: "POST", requestPackage: LoginBody(username: username, password: password))
             .receive(on: DispatchQueue.main)
             .decode(type: TokenResponse.self, decoder: JSONDecoder())
-            .sink { [weak self] (completion) in
-                guard let self = self else { return }
-                
+            .sink { completion in
                 switch completion {
-                    
                 case .finished:
-                    self.refreshToken = token
-                    self.localUsername = username
-                    do {
-                        try self.dataFetchable.enableAuth()
-                        onFinished()
-                    } catch {
-                        onFaild(error)
-                    }
-                    
+                    break
                 case .failure(let error):
                     onFaild(error)
                 }
                 
-            } receiveValue: {
-                token = $0.refreshToken
+            } receiveValue: { [weak self] in
+                guard let self = self else { return }
+                let token = $0.refreshToken
+                
+                self.keychainService.saveRefreshToken(token)
+                self.localUsername = username
+                do {
+                    try self.dataFetchable.enableAuth()
+                    onFinished()
+                } catch {
+                    onFaild(error)
+                }
             }
             .store(in: &cancellables)
         
@@ -100,7 +99,7 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
     
     func logout(action: () -> Void = {}) {
         dataFetchable.disableAuth()
-        refreshToken = nil
+        keychainService.deleteRefreshToken()
         localUsername = nil
         action()
     }
