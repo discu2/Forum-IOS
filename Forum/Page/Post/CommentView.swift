@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct CommentView: View {
     @StateObject private var viewModel: CommentViewModel
@@ -18,7 +19,7 @@ struct CommentView: View {
     }
     
     var body: some View {
-
+        
         ZStack {
             Color.secondary
             
@@ -81,13 +82,7 @@ struct CommentBlock: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                AsyncImage(url: URL(string:"http://localhost:8080/account/" + textBlock.ownerUsername + "/profile_pic?size=2")) { phase in
-                    if let image = phase.image {
-                        image.resizable()
-                    } else {
-                        Color.gray
-                    }
-                }
+                avatarBuilder
                 .frame(width: 32, height: 32)
                 .clipShape(Circle())
                 
@@ -114,6 +109,20 @@ struct CommentBlock: View {
             
         }
         .padding(.vertical, 3)
+    }
+    
+    @ViewBuilder var avatarBuilder: some View {
+        if let imageId = viewModel.avatarIds[textBlock.ownerUsername] {
+            CachedAsyncImage(url: URL(string:"http://localhost:8080/avatar?id=\(imageId)")) { phase in
+                if let image = phase.image {
+                    image.resizable()
+                } else {
+                    Color.gray
+                }
+            }
+        } else {
+            Color.gray
+        }
     }
 }
 

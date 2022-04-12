@@ -76,9 +76,7 @@ class LocalAccountViewModel: ObservableObject {
                 }
                 
             } receiveValue: { [weak self] data in
-                guard let self = self else { return }
-                
-                self.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname)
+                self?.account = Account(username: data.username, roleIds: data.roleIds, nickname: data.nickname, avatarIds: data.avatarIds)
             }
             .store(in: &cancellables)
         
@@ -88,5 +86,6 @@ class LocalAccountViewModel: ObservableObject {
         let username: String
         let nickname: String
         let roleIds: [String]
+        let avatarIds: [String:String]
     }
 }

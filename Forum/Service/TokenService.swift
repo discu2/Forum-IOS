@@ -54,8 +54,18 @@ class TokenService {
         var throwable: Error?
         
         URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throwable = error
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throwable = HttpError.unknow
+                semaphore.signal()
+                return
+            }
+            guard httpResponse.statusCode == 200 else {
+                if let error = error {
+                    throwable = error
+                } else {
+                    throwable = HttpError.code(httpResponse.statusCode)
+                }
+                
                 semaphore.signal()
                 return
             }

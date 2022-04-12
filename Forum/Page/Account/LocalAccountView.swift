@@ -84,15 +84,18 @@ struct ProfileView: View {
     
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: "http://localhost:8080/account/" + (viewModel.account?.username ?? "") + "/profile_pic?size=1")) { phase in
-                if let image = phase.image {
-                    image.resizable()
-                } else {
-                    Color.gray
+            
+            if let username = viewModel.localUsername {
+                AsyncImage(url: URL(string: "http://localhost:8080/avatar/" + username + "?size=1")) { phase in
+                    if let image = phase.image {
+                        image.resizable()
+                    } else {
+                        Color.gray
+                    }
                 }
+                .frame(width: 120, height: 120)
+                .clipShape(Circle())
             }
-            .frame(width: 120, height: 120)
-            .clipShape(Circle())
             
             Text(viewModel.account != nil ? viewModel.account!.nickname : "some text")
                 .font(.title)

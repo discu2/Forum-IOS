@@ -21,6 +21,9 @@
 		0195D37327D62D39006C0FA8 /* ForumNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */; };
 		2B29487327E30B6F007D150D /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B29487227E30B6F007D150D /* ApiService.swift */; };
 		2B29487627E3457F007D150D /* DataFetchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B29487527E3457F007D150D /* DataFetchable.swift */; };
+		2B58C70B2804543B007FFBB3 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 2B58C70A2804543B007FFBB3 /* CachedAsyncImage */; };
+		2B58C70E280454AD007FFBB3 /* URLCacheExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */; };
+		2B58C7102804580B007FFBB3 /* AccountDetailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */; };
 		2B9FB7E927FF313200D37DD7 /* AccountRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FB7E827FF313200D37DD7 /* AccountRegisterView.swift */; };
 		2B9FB7EB27FF318200D37DD7 /* AccountRegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FB7EA27FF318200D37DD7 /* AccountRegisterViewModel.swift */; };
 		2BAC885127FC6DA5007A11AF /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC885027FC6DA5007A11AF /* CommentView.swift */; };
@@ -66,6 +69,8 @@
 		0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForumNavBarView.swift; sourceTree = "<group>"; };
 		2B29487227E30B6F007D150D /* ApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		2B29487527E3457F007D150D /* DataFetchable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFetchable.swift; sourceTree = "<group>"; };
+		2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCacheExtension.swift; sourceTree = "<group>"; };
+		2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailService.swift; sourceTree = "<group>"; };
 		2B9FB7E827FF313200D37DD7 /* AccountRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRegisterView.swift; sourceTree = "<group>"; };
 		2B9FB7EA27FF318200D37DD7 /* AccountRegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRegisterViewModel.swift; sourceTree = "<group>"; };
 		2BAC885027FC6DA5007A11AF /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -88,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B58C70B2804543B007FFBB3 /* CachedAsyncImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +120,8 @@
 		0126BE5927D38C1F00D34588 /* Forum */ = {
 			isa = PBXGroup;
 			children = (
+				2B58C70C2804548A007FFBB3 /* Extension */,
+				2B2FA56F27F5A6620000DA1F /* Component */,
 				0195D37027D62CEA006C0FA8 /* Page */,
 				2B29487427E34554007D150D /* Protocol */,
 				0126BE6B27D38ECE00D34588 /* Model */,
@@ -172,7 +180,6 @@
 				2BB8C40B27DF701700AB86FE /* Board */,
 				0126BE6F27D3937D00D34588 /* Topic */,
 				0144CC7927D5D723005A8B7C /* Post */,
-				2B2FA56F27F5A6620000DA1F /* Component */,
 				2BB8C40A27DF701700AB86FE /* ForumIndexView.swift */,
 				2BF1ADC427F8651D005D9CCE /* ForumIndexViewModel.swift */,
 			);
@@ -184,6 +191,7 @@
 			children = (
 				2B29487227E30B6F007D150D /* ApiService.swift */,
 				2BE2E53F27F6E7550018DA1D /* TokenService.swift */,
+				2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -204,6 +212,14 @@
 				2BBA237428019BA9008E3E5D /* LazyNavigationView.swift */,
 			);
 			path = Component;
+			sourceTree = "<group>";
+		};
+		2B58C70C2804548A007FFBB3 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		2BB8C40727DF701700AB86FE /* Account */ = {
@@ -243,6 +259,9 @@
 			dependencies = (
 			);
 			name = Forum;
+			packageProductDependencies = (
+				2B58C70A2804543B007FFBB3 /* CachedAsyncImage */,
+			);
 			productName = Forum;
 			productReference = 0126BE5727D38C1F00D34588 /* Forum.app */;
 			productType = "com.apple.product-type.application";
@@ -271,6 +290,9 @@
 				Base,
 			);
 			mainGroup = 0126BE4E27D38C1F00D34588;
+			packageReferences = (
+				2B58C7092804543B007FFBB3 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+			);
 			productRefGroup = 0126BE5827D38C1F00D34588 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -300,6 +322,7 @@
 			files = (
 				0126BE5B27D38C1F00D34588 /* ForumApp.swift in Sources */,
 				0144CC7627D4A6A3005A8B7C /* PostViewModel.swift in Sources */,
+				2B58C70E280454AD007FFBB3 /* URLCacheExtension.swift in Sources */,
 				2BF1ADC527F8651D005D9CCE /* ForumIndexViewModel.swift in Sources */,
 				2BB8C40E27DF701700AB86FE /* ForumIndexView.swift in Sources */,
 				0144CC7827D4A6D3005A8B7C /* PostView.swift in Sources */,
@@ -310,6 +333,7 @@
 				0126BE7327D3C7B400D34588 /* Board.swift in Sources */,
 				2BFA907F27FAF4360012066A /* AuthManager.swift in Sources */,
 				2BB8C41127DF706D00AB86FE /* BoardView.swift in Sources */,
+				2B58C7102804580B007FFBB3 /* AccountDetailService.swift in Sources */,
 				2BE2E54027F6E7550018DA1D /* TokenService.swift in Sources */,
 				2BAC885127FC6DA5007A11AF /* CommentView.swift in Sources */,
 				0126BE7527D3CA3D00D34588 /* TextBlock.swift in Sources */,
@@ -525,6 +549,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2B58C7092804543B007FFBB3 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2B58C70A2804543B007FFBB3 /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2B58C7092804543B007FFBB3 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
+			productName = CachedAsyncImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0126BE4F27D38C1F00D34588 /* Project object */;
 }
