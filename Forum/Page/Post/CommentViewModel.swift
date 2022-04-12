@@ -14,16 +14,16 @@ class CommentViewModel: ObservableObject {
     @Published private(set) var avatarIds = [String:String]()
     
     let dataFetchable: DataFetchable
-    let accountDetialService: AccountDetailService
+    let accountDetailService: AccountDetailService
     
     var usernames = [String]()
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(postId: String, dataFetchable: DataFetchable) {
+    init(postId: String, dataFetchable: DataFetchable, accountDetailService: AccountDetailService) {
         self.postId = postId
         self.dataFetchable = dataFetchable
-        self.accountDetialService = AccountDetailService(dataFetchable: dataFetchable)
+        self.accountDetailService = accountDetailService
         
         accountsListener()
     }
@@ -35,8 +35,8 @@ class CommentViewModel: ObservableObject {
     }
     
     func accountsListener() {
-        accountDetialService.$accounts
-            .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
+        accountDetailService.$accounts
+            .debounce(for: .milliseconds(100), scheduler: DispatchQueue.main)
             .map {
                 var result = [String:String]()
                 for username in $0.keys {
@@ -63,9 +63,7 @@ class CommentViewModel: ObservableObject {
                 for comment in data {
                     comments.append(Comment(id: comment.id, textBlock: TextBlock(ownerUsername: comment.ownerUsername, postTime: Date(timeIntervalSince1970: comment.postTime/1000), lastEditTime: Date(timeIntervalSince1970: comment.lastEditTime/1000), content: comment.content, likeUsers: comment.likeUsers, dislikeUsers: comment.dislikeUsers), postId: comment.postId))
                     
-                    if users.contains(comment.ownerUsername) {
-                        continue
-                    }
+                    if users.contains(comment.ownerUsername) { continue }
                     
                     users.append(comment.ownerUsername)
                 }
@@ -75,7 +73,7 @@ class CommentViewModel: ObservableObject {
             .sink { [unowned self] completion in
                 switch completion {
                 case .finished:
-                    self.accountDetialService.fetchAccount(usernames: self.usernames)
+                    self.accountDetailService.fetchAccount(usernames: self.usernames)
                 case .failure(let error):
                     print(error)
                 }

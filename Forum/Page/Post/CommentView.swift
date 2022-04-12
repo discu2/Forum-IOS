@@ -12,8 +12,8 @@ struct CommentView: View {
     @StateObject private var viewModel: CommentViewModel
     @Binding private var isCommentPoped: Bool
     
-    init(dataFetchable: DataFetchable, postId: String, isCommentPoped: Binding<Bool>) {
-        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable))
+    init(dataFetchable: DataFetchable, accountDetialService: AccountDetailService, postId: String, isCommentPoped: Binding<Bool>) {
+        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable, accountDetailService: accountDetialService))
         
         self._isCommentPoped = isCommentPoped
     }
@@ -24,20 +24,25 @@ struct CommentView: View {
                 CommentBlock(textBlock: comment.textBlock)
                     .environmentObject(viewModel)
             }
-            .onAppear { viewModel.fetchComments() }
             .navigationTitle("Comment")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(trailing: Image(systemName: "xmark").foregroundColor(.primary))
+            .navigationBarItems(trailing: Button {
+                isCommentPoped.toggle()
+            } label: {
+                Image(systemName: "xmark")
+                .foregroundColor(.primary)
+            })
         }
-        
+        .navigationViewStyle(.stack)
+        .onAppear { viewModel.fetchComments() }
     }
 }
 
 struct PreviewCommentBlock: View {
     @StateObject private var viewModel: CommentViewModel
     
-    init(dataFetchable: DataFetchable, postId: String) {
-        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable))
+    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService, postId: String) {
+        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable, accountDetailService: accountDetailService))
     }
     
     var body: some View {
@@ -101,7 +106,7 @@ struct CommentBlock: View {
     
     @ViewBuilder var avatarBuilder: some View {
         if let imageId = viewModel.avatarIds[textBlock.ownerUsername] {
-            CachedAsyncImage(url: URL(string:"http://localhost:8080/avatar?id=\(imageId)")) { phase in
+            CachedAsyncImage(url: URL(string:"http://localhost:8080/avatar?id=\(imageId)"), urlCache: .accountAvatarCache) { phase in
                 if let image = phase.image {
                     image.resizable()
                 } else {

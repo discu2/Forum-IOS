@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import CachedAsyncImage
 
 struct PostView: View {
     @StateObject private var viewModel: PostViewModel
     @State private var title: String
     @State private var topicId: String
     
-    init(dataFetchable: DataFetchable, title: String, topicId: String) {
-        self._viewModel = StateObject(wrappedValue: PostViewModel(dataFetchable: dataFetchable))
+    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService, title: String, topicId: String) {
+        self._viewModel = StateObject(wrappedValue: PostViewModel(dataFetchable: dataFetchable, accountDetailService: accountDetailService))
         self.topicId = topicId
         self.title = title
     }
@@ -49,9 +50,15 @@ struct TextblockView: View {
         
         VStack(alignment: .leading, spacing: 16) {
             
-            Text(textBlock.ownerUsername)
-                .font(/*@START_MENU_TOKEN@*/.body/*@END_MENU_TOKEN@*/).bold()
-                .padding(.bottom, 10)
+            HStack {
+                avatarBuilder
+                    .frame(width: 48, height: 48)
+                    .clipShape(Circle())
+                
+                Text(textBlock.ownerUsername)
+                    .font(/*@START_MENU_TOKEN@*/.body/*@END_MENU_TOKEN@*/).bold()
+            }
+            .padding(.bottom, 10)
             
             Text(textBlock.content)
                 .font(.body)
@@ -59,16 +66,30 @@ struct TextblockView: View {
             Button {
                 isCommentPoped.toggle()
             } label: {
-                PreviewCommentBlock(dataFetchable: viewModel.dataFetchable, postId: id)
+                PreviewCommentBlock(dataFetchable: viewModel.dataFetchable, accountDetailService: viewModel.accountDetailService, postId: id)
             }
             .buttonStyle(.plain)
             .popover(isPresented: $isCommentPoped) {
-                CommentView(dataFetchable: viewModel.dataFetchable, postId: id, isCommentPoped: $isCommentPoped)
+                CommentView(dataFetchable: viewModel.dataFetchable, accountDetialService: viewModel.accountDetailService, postId: id, isCommentPoped: $isCommentPoped)
             }
             
             Spacer()
         }
         
+    }
+    
+    @ViewBuilder var avatarBuilder: some View {
+        if let imageId = viewModel.avatarIds[textBlock.ownerUsername] {
+            CachedAsyncImage(url: URL(string:"http://localhost:8080/avatar?id=\(imageId)"), urlCache: .accountAvatarCache) { phase in
+                if let image = phase.image {
+                    image.resizable()
+                } else {
+                    Color.gray
+                }
+            }
+        } else {
+            Color.gray
+        }
     }
     
 }

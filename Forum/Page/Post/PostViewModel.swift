@@ -11,15 +11,21 @@ import Combine
 class PostViewModel: ObservableObject {
     @Published var topicId: String? = nil
     @Published private(set) var posts: [Post] = []
+    @Published private(set) var avatarIds = [String:String]()
     
     let dataFetchable: DataFetchable
+    let accountDetailService: AccountDetailService
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(dataFetchable: DataFetchable) {
+    var usernames = [String]()
+    
+    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService) {
         self.dataFetchable = dataFetchable
+        self.accountDetailService = accountDetailService
         
         topicIdListener()
+        accountsListener()
     }
     
     deinit {
@@ -42,6 +48,24 @@ class PostViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func accountsListener() {
+        accountDetailService.$accounts
+            .debounce(for: .milliseconds(100), scheduler: DispatchQueue.main)
+            .map {
+                var result = [String:String]()
+                for username in $0.keys {
+                    guard let avatarId = ($0[username] as? Account)?.avatarIds["SMALL"] else { continue }
+                    result.updateValue(avatarId, forKey: username)
+                }
+                
+                return result
+            }
+            .sink { [weak self] data in
+                self?.avatarIds = data
+            }
+            .store(in: &cancellables)
+    }
+    
     func fetchPosts(_ topicId: String, page: Int) {
         
         let endPointString = "/post/" + topicId + "?page=" + page.description
@@ -49,27 +73,32 @@ class PostViewModel: ObservableObject {
         dataFetchable.fetchApi(endPointString)
             .receive(on: DispatchQueue.main)
             .decode(type: [TopicResponse].self, decoder: JSONDecoder())
-            .sink { (completion) in
-                switch completion{
-                case .finished:
-                    break
-                case .failure(let error):
-                    print(error)
-                }
-                
-            } receiveValue: { [weak self] (data) in
-                guard let self = self else {
-                    return
-                }
-                
+            .map { data -> (post: [Post], users: [String]) in
                 var posts = [Post]()
+                var users = [String]()
                 
                 for p in data {
                     let textblock = TextBlock(ownerUsername: p.ownerUsername, postTime: Date(timeIntervalSince1970: p.postTime/1000), lastEditTime: Date(timeIntervalSince1970: p.lastEditTime/1000), content: p.content, likeUsers: p.likeUsers, dislikeUsers: p.dislikeUsers)
                     posts.append(Post(id: p.id, textBlock: textblock, topicId: p.topicId, originPost: p.originPost))
+                    
+                    if users.contains(p.ownerUsername) { continue }
+                    
+                    users.append(p.ownerUsername)
                 }
                 
-                self.posts += posts
+                return (posts, users)
+            }
+            .sink { (completion) in
+                switch completion{
+                case .finished:
+                    self.accountDetailService.fetchAccount(usernames: self.usernames)
+                case .failure(let error):
+                    print(error)
+                }
+                
+            } receiveValue: { [weak self] posts, users in
+                self?.posts += posts
+                self?.usernames += users
                 
             }
             .store(in: &cancellables)

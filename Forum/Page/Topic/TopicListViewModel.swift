@@ -17,6 +17,8 @@ class TopicListViewModel: ObservableObject {
     private(set) var page: Int = 1
     
     let dataFetchable: DataFetchable
+    let accountDetailService: AccountDetailService
+    
     private(set) var dateFormatter = DateFormatter()
     private var cancellables = Set<AnyCancellable>()
     
@@ -29,6 +31,7 @@ class TopicListViewModel: ObservableObject {
         dateFormatter.locale = Locale(identifier: "zh_TW")
         
         self.dataFetchable = dataFetchable
+        self.accountDetailService = AccountDetailService(dataFetchable: dataFetchable)
         
         boardIdListener()
        
