@@ -25,6 +25,7 @@
 		2B58C70B2804543B007FFBB3 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 2B58C70A2804543B007FFBB3 /* CachedAsyncImage */; };
 		2B58C70E280454AD007FFBB3 /* URLCacheExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */; };
 		2B58C7102804580B007FFBB3 /* AccountDetailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */; };
+		2B58C8F8280DC29600F38922 /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C8F7280DC29600F38922 /* Dependencies.swift */; };
 		2B9FB7E927FF313200D37DD7 /* AccountRegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FB7E827FF313200D37DD7 /* AccountRegisterView.swift */; };
 		2B9FB7EB27FF318200D37DD7 /* AccountRegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FB7EA27FF318200D37DD7 /* AccountRegisterViewModel.swift */; };
 		2BAC885127FC6DA5007A11AF /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC885027FC6DA5007A11AF /* CommentView.swift */; };
@@ -73,6 +74,7 @@
 		2B36518A2805E1CC00F7D779 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		2B58C70D280454AD007FFBB3 /* URLCacheExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCacheExtension.swift; sourceTree = "<group>"; };
 		2B58C70F2804580B007FFBB3 /* AccountDetailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailService.swift; sourceTree = "<group>"; };
+		2B58C8F7280DC29600F38922 /* Dependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		2B9FB7E827FF313200D37DD7 /* AccountRegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRegisterView.swift; sourceTree = "<group>"; };
 		2B9FB7EA27FF318200D37DD7 /* AccountRegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRegisterViewModel.swift; sourceTree = "<group>"; };
 		2BAC885027FC6DA5007A11AF /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 			children = (
 				0195D37227D62D39006C0FA8 /* ForumNavBarView.swift */,
 				2BBA237428019BA9008E3E5D /* LazyNavigationView.swift */,
+				2B58C8F7280DC29600F38922 /* Dependencies.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -276,7 +279,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1330;
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					0126BE5627D38C1F00D34588 = {
@@ -326,6 +329,7 @@
 				0126BE5B27D38C1F00D34588 /* ForumApp.swift in Sources */,
 				0144CC7627D4A6A3005A8B7C /* PostViewModel.swift in Sources */,
 				2B58C70E280454AD007FFBB3 /* URLCacheExtension.swift in Sources */,
+				2B58C8F8280DC29600F38922 /* Dependencies.swift in Sources */,
 				2BF1ADC527F8651D005D9CCE /* ForumIndexViewModel.swift in Sources */,
 				2BB8C40E27DF701700AB86FE /* ForumIndexView.swift in Sources */,
 				0144CC7827D4A6D3005A8B7C /* PostView.swift in Sources */,

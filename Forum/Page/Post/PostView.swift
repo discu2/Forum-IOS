@@ -9,15 +9,9 @@ import SwiftUI
 import CachedAsyncImage
 
 struct PostView: View {
-    @StateObject private var viewModel: PostViewModel
-    @State private var title: String
-    @State private var topicId: String
-    
-    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService, title: String, topicId: String) {
-        self._viewModel = StateObject(wrappedValue: PostViewModel(dataFetchable: dataFetchable, accountDetailService: accountDetailService))
-        self.topicId = topicId
-        self.title = title
-    }
+    @StateObject private var viewModel = PostViewModel()
+    @State var title: String
+    @State var topicId: String
     
     var body: some View {
         List(viewModel.posts, id: \.id) { item in
@@ -66,11 +60,11 @@ struct TextblockView: View {
             Button {
                 isCommentPoped.toggle()
             } label: {
-                PreviewCommentBlock(dataFetchable: viewModel.dataFetchable, accountDetailService: viewModel.accountDetailService, postId: id)
+                PreviewCommentBlock(postId: id)
             }
             .buttonStyle(.plain)
             .popover(isPresented: $isCommentPoped) {
-                CommentView(dataFetchable: viewModel.dataFetchable, accountDetialService: viewModel.accountDetailService, postId: id, isCommentPoped: $isCommentPoped)
+                CommentView(postId: id, isCommentPoped: $isCommentPoped)
             }
             
             Spacer()

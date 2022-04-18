@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct BoardView: View {
-    @StateObject private var viewModel: BoardViewModel
-    
-    init(dataFetchable: DataFetchable) {
-        self._viewModel = StateObject(wrappedValue: BoardViewModel(dataFetchable: dataFetchable))
-    }
+    @StateObject private var viewModel = BoardViewModel()
     
     var body: some View {
         NavigationView {
@@ -48,7 +44,7 @@ struct GroupView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(4)
                     
-                    NavigationLink(destination: LazyNavigationView(TopicListView(dataFetchable: viewModel.dataFetchable, boardId: board.id, boardName: board.name))) {
+                    NavigationLink(destination: LazyNavigationView(TopicListView(boardId: board.id, boardName: board.name))) {
                         
                         EmptyView()
                     }
@@ -63,7 +59,7 @@ struct GroupView: View {
 
 struct BoardView_Previews: PreviewProvider {
     static var previews: some View {
-        BoardView(dataFetchable: ApiService(urlString: ""))
+        BoardView()
             .previewInterfaceOrientation(.portrait)
     }
 }

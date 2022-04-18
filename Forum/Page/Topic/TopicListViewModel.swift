@@ -16,22 +16,22 @@ class TopicListViewModel: ObservableObject {
     private var refreshing = false
     private(set) var page: Int = 1
     
-    let dataFetchable: DataFetchable
-    let accountDetailService: AccountDetailService
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
+    
+    @Dependencies.InjectObject
+    private var accountDetailService: AccountDetailService
     
     private(set) var dateFormatter = DateFormatter()
     private var cancellables = Set<AnyCancellable>()
     
-    init(dataFetchable: DataFetchable) {
+    init() {
         
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .short
         dateFormatter.locale = Locale.current
         dateFormatter.doesRelativeDateFormatting = true
         dateFormatter.locale = Locale(identifier: "zh_TW")
-        
-        self.dataFetchable = dataFetchable
-        self.accountDetailService = AccountDetailService(dataFetchable: dataFetchable)
         
         boardIdListener()
        

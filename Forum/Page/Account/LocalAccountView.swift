@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct LocalAccountView: View {
-    @StateObject private var viewModel: LocalAccountViewModel
-    
-    init(dataFetchable: DataFetchable, authManager: AuthManager) {
-        self._viewModel = StateObject(wrappedValue: LocalAccountViewModel(dataFetchable: dataFetchable, authManager: authManager))
-    }
+    @StateObject private var viewModel = LocalAccountViewModel()
     
     var body: some View {
         
@@ -42,7 +38,7 @@ struct LoginView: View {
             isRegisterViewPoped.toggle()
         }
         .popover(isPresented: $isRegisterViewPoped) {
-            AccountRegisterView(dataFetchable: viewModel.dataFetchable, isRegisterViewPoped: $isRegisterViewPoped)
+            AccountRegisterView(isRegisterViewPoped: $isRegisterViewPoped)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding()
@@ -121,9 +117,9 @@ struct ProfileView: View {
     }
 }
 
-//struct AccountView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LocalAccountView(dataFetchable: ApiService(urlString: ""), authManager: AuthManager())
-//        ProfileView()
-//    }
-//}
+struct AccountView_Previews: PreviewProvider {
+    static var previews: some View {
+        LocalAccountView()
+        ProfileView()
+    }
+}

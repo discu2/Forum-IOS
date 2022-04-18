@@ -13,17 +13,17 @@ class LocalAccountViewModel: ObservableObject {
     @Published private(set) var isLoggedIn: Bool = false
     @Published private(set) var errorMessage: String? = nil
     
-    let dataFetchable: DataFetchable
-    private let authManager: AuthManager
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
+    
+    @Dependencies.InjectObject
+    private var authManager: AuthManager
     
     @AppStorage("localUsername") var localUsername: String?
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(dataFetchable: DataFetchable, authManager: AuthManager) {
-        self.dataFetchable = dataFetchable
-        self.authManager = authManager
-        
+    init() {
         if (dataFetchable.tokenService == nil) {
             return
         }

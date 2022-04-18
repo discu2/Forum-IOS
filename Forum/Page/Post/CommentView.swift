@@ -12,9 +12,8 @@ struct CommentView: View {
     @StateObject private var viewModel: CommentViewModel
     @Binding private var isCommentPoped: Bool
     
-    init(dataFetchable: DataFetchable, accountDetialService: AccountDetailService, postId: String, isCommentPoped: Binding<Bool>) {
-        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable, accountDetailService: accountDetialService))
-        
+    init(postId: String, isCommentPoped: Binding<Bool>) {
+        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId))
         self._isCommentPoped = isCommentPoped
     }
     
@@ -41,8 +40,8 @@ struct CommentView: View {
 struct PreviewCommentBlock: View {
     @StateObject private var viewModel: CommentViewModel
     
-    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService, postId: String) {
-        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId, dataFetchable: dataFetchable, accountDetailService: accountDetailService))
+    init(postId: String) {
+        self._viewModel = StateObject(wrappedValue: CommentViewModel(postId: postId))
     }
     
     var body: some View {

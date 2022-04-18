@@ -9,7 +9,8 @@ import SwiftUI
 import Combine
 
 class ForumIndexViewModel: ObservableObject, AuthManager {
-    let dataFetchable: DataFetchable
+    @Dependencies.InjectObject
+    var dataFetchable: DataFetchable
     
     @AppStorage("localUsername") private var localUsername: String?
     
@@ -18,10 +19,10 @@ class ForumIndexViewModel: ObservableObject, AuthManager {
     
     private let keychainService: KeychainService
     
-    init(dataFetchable: DataFetchable) {
-        self.dataFetchable = dataFetchable
+    init() {
         self.keychainService = KeychainService()
         self.tokenServiceListener()
+        Dependencies.Container.main.register(self)
         
         do {
             try self.dataFetchable.enableAuth()

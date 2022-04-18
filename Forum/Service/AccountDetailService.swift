@@ -18,13 +18,12 @@ class AccountDetailService {
     
     @Published var accounts = [String:Account?]()
         
-    let dataFetchable: DataFetchable
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
     
     var cancellables = Set<AnyCancellable>()
     
-    init(dataFetchable: DataFetchable) {
-        self.dataFetchable = dataFetchable
-    }
+    init() {}
     
     deinit {
         cancellables.forEach {

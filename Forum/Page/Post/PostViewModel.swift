@@ -13,17 +13,17 @@ class PostViewModel: ObservableObject {
     @Published private(set) var posts: [Post] = []
     @Published private(set) var avatarIds = [String:String]()
     
-    let dataFetchable: DataFetchable
-    let accountDetailService: AccountDetailService
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
+    
+    @Dependencies.InjectObject
+    private var accountDetailService: AccountDetailService
     
     private var cancellables = Set<AnyCancellable>()
     
     var usernames = [String]()
     
-    init(dataFetchable: DataFetchable, accountDetailService: AccountDetailService) {
-        self.dataFetchable = dataFetchable
-        self.accountDetailService = accountDetailService
-        
+    init() {
         topicIdListener()
         accountsListener()
     }

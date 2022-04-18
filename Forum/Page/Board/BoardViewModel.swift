@@ -15,11 +15,10 @@ class BoardViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    let dataFetchable: DataFetchable
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
     
-    init(dataFetchable: DataFetchable){
-        self.dataFetchable = dataFetchable
-        
+    init(){
         tokenServiceListener()
     }
     

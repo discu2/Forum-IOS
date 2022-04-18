@@ -15,7 +15,8 @@ class AccountRegisterViewModel: ObservableObject {
     
     @Published private(set) var readyToRegister = false
     
-    let dataFetchable: DataFetchable
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -23,9 +24,7 @@ class AccountRegisterViewModel: ObservableObject {
     private let passwordRegex = try! NSRegularExpression(pattern: "^(?=.*[0-9])(?=.*[A-Z])(?=\\S+$).{8,64}$", options: .caseInsensitive)
     private let usernameRegex = try! NSRegularExpression(pattern: "^[A-Z0-9._].{4,16}$", options: .caseInsensitive)
     
-    init(dataFetchable: DataFetchable) {
-        self.dataFetchable = dataFetchable
-        
+    init() {
         textInputListener()
     }
     

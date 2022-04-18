@@ -8,22 +8,17 @@
 import SwiftUI
 
 struct AccountRegisterView: View {
-    @StateObject private var viewModel: AccountRegisterViewModel
+    @StateObject private var viewModel = AccountRegisterViewModel()
     @State private var errorMessage = " "
     
     @State private var registerAlertPoped = false
-    @Binding private var isRegisterViewPoped: Bool
+    @Binding var isRegisterViewPoped: Bool
     
     private enum Field: Hashable {
         case EMAIL, USERNAME, PASSWORD
     }
     
     @FocusState private var focusedField: Field?
-    
-    init(dataFetchable: DataFetchable, isRegisterViewPoped: Binding<Bool>) {
-        self._viewModel = StateObject(wrappedValue: AccountRegisterViewModel(dataFetchable: dataFetchable))
-        self._isRegisterViewPoped = isRegisterViewPoped
-    }
     
     var body: some View {
 
@@ -105,7 +100,9 @@ struct AccountRegisterView: View {
 }
 
 //struct AccountRegisterView_Previews: PreviewProvider {
+//    @State var isPop = false
+//    
 //    static var previews: some View {
-//        AccountRegisterView()
+//        AccountRegisterView(isRegisterViewPoped: $isPop)
 //    }
 //}

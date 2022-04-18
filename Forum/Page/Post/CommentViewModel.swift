@@ -13,17 +13,18 @@ class CommentViewModel: ObservableObject {
     @Published private(set) var comments = [Comment]()
     @Published private(set) var avatarIds = [String:String]()
     
-    let dataFetchable: DataFetchable
-    let accountDetailService: AccountDetailService
+    @Dependencies.InjectObject
+    private var dataFetchable: DataFetchable
+    
+    @Dependencies.InjectObject
+    private var accountDetailService: AccountDetailService
     
     var usernames = [String]()
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(postId: String, dataFetchable: DataFetchable, accountDetailService: AccountDetailService) {
+    init(postId: String) {
         self.postId = postId
-        self.dataFetchable = dataFetchable
-        self.accountDetailService = accountDetailService
         
         accountsListener()
     }
