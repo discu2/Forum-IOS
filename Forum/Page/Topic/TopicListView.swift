@@ -33,6 +33,11 @@ struct TopicListView: View {
         .listStyle(.plain)
         .navigationTitle(boardName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            NavigationLink(destination: EditorView(boardId: viewModel.boardId ?? "", hasTitle: true)) {
+                Image(systemName: "square.and.pencil")
+            }
+        }
         .refreshable {
             await viewModel.refresh()
         }
