@@ -11,6 +11,7 @@ struct TopicListView: View {
     @StateObject private var viewModel = TopicListViewModel()
     @State var boardId: String
     @State var boardName: String
+    @State var isEditorPresented = false
     
     var body: some View {
         List(viewModel.topics.indices, id: \.self) { index in
@@ -34,7 +35,9 @@ struct TopicListView: View {
         .navigationTitle(boardName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            NavigationLink(destination: EditorView(boardId: viewModel.boardId ?? "", hasTitle: true)) {
+            Button {
+                isEditorPresented = true
+            } label: {
                 Image(systemName: "square.and.pencil")
             }
         }
@@ -43,6 +46,9 @@ struct TopicListView: View {
         }
         .onAppear {
             viewModel.boardId = boardId
+        }
+        .fullScreenCover(isPresented: $isEditorPresented) {
+            EditorView(boardId: boardId, hasTitle: true)
         }
     }
 }
